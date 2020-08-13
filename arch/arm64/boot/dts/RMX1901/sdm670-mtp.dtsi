@@ -102,11 +102,11 @@
 //else if
 /*
 &qupv3_se3_i2c {
-	status = "disabled";
+	status = "ok";
 	nq@28 {
 		compatible = "qcom,nq-nci";
 		reg = <0x28>;
-		//qcom,nq-irq = <&tlmm 44 0x00>;
+		qcom,nq-irq = <&tlmm 44 0x00>;
 		qcom,nq-ven = <&tlmm 12 0x00>;
 		qcom,nq-firm = <&tlmm 43 0x00>;
 		qcom,nq-clkreq = <&pm660_gpios 4 0x00>;
@@ -148,8 +148,12 @@
 	pinctrl-names = "active", "sleep";
 	pinctrl-0 = <&sdc1_clk_on  &sdc1_cmd_on &sdc1_data_on &sdc1_rclk_on>;
 	pinctrl-1 = <&sdc1_clk_off &sdc1_cmd_off &sdc1_data_off &sdc1_rclk_off>;
-
-	status = "ok";
+//#ifndef VENDOR_EDIT
+//yh@PSW.BSP.Storage.UFS, 2018-06-04 add for disable sdhci
+//	status = "ok";
+//#else
+	status = "disabled";
+//#endif
 };
 
 &sdhc_2 {
@@ -165,13 +169,14 @@
 	pinctrl-0 = <&sdc2_clk_on &sdc2_cmd_on &sdc2_data_on &sdc2_cd_on>;
 	pinctrl-1 = <&sdc2_clk_off &sdc2_cmd_off &sdc2_data_off &sdc2_cd_off>;
 
-	cd-gpios = <&tlmm 96 0x0>;
-	/* #ifndef VENDOR_EDIT */
-	/* Nan.Zhong@PSW.MM.AudioDriver.Machine, 2019/08/14, Modify for dbmdx */
-	status = "ok";
-	/* #else  VENDOR_EDIT */
-	//status = "disable";
-	/* #endif VENDOR_EDIT */
+	cd-gpios = <&tlmm 96 0x1>;
+
+//#ifndef VENDOR_EDIT
+//yh@PSW.BSP.Storage.UFS, 2018-06-04 add for disable sdhci
+//	status = "ok";
+//#else
+	status = "disabled";
+//#endif
 };
 
 &vendor {
@@ -208,12 +213,12 @@
 
 		/* Other HW Resource */
 		irq-gpio = <&tlmm 125 0x2008>;
-		reset-gpio = <&tlmm 99 0x1>; //use gpio 99 for evt
+		reset-gpio = <&tlmm 119 0x1>; //use gpio 199 for evt
 		pinctrl-names = "default";
 		pinctrl-0 = <&ts_int_active &ts_reset_active>;
 
 		touchpanel,max-num-support = <10>;
-		touchpanel,tx-rx-num = <16 33>;
+		touchpanel,tx-rx-num = <16 34>;
 		touchpanel,panel-coords = <1080 2340>;
 		touchpanel,display-coords = <1080 2340>;
 		touchpanel,touchmajor-limit = <0 54>;
@@ -231,8 +236,6 @@
 		fw_update_app_support;
 		fingerprint_underscreen_support;
 		ic_is_synaptics;
-		report_120hz_support;
-
 		/*
 		 *Virtual Key Config:
 		 *1:touchpanel,button-type: <virtualkey_type  supportted_button-map>
@@ -399,7 +402,7 @@
             oppo,fp-id = <1>; /* fp id mapping table */
             vendor-chip = <11>; /* please refer to the struct fp_vendor_t in oppo_fp_commmon.n */
             eng-menu = "-1,-1"; /* represents SNR, inclination test item in engineer menu, and 0/1 means off/on */
-            chip-name = "G_OPTICAL_G3";  /* /proc/fp_id, will be displayed in engineer menu  */
+            chip-name = "G_OPTICAL_G2";  /* /proc/fp_id, will be displayed in engineer menu  */
         };
         silead_optical {
             oppo,fp-id = <0>; /* fp id mapping table */
@@ -416,17 +419,16 @@
     };
     //#endif //VENDOR_EDIT
     // #ifdef VENDOR_EDIT
-    /* Shengwang.Luo@RM.Bsp.Fingerprint.Basic 2019-10-01 add for fingerprint */
+    /* ziqing.guo@BSP.Fingerprint.Basic 2019-07-18 add for euclid */
+    /* oujinrong@BSP.Fingerprint.Basic 2019-09-03 add for power list */
     goodix_fp {
-        compatible = "goodix,goodix_fp";
-        interrupt-parent = <&tlmm>;
-        interrupts = <121 0>;
-        goodix,gpio_irq = <&tlmm 121 0x1>;
-        goodix,gpio_reset = <&tlmm 80 0x0>;
-        goodix,goodix_pwr = <&tlmm 126 0x0>;
-        goodix,goodix_vdd = <&tlmm 122 0x0>;
-        ldo5-supply = <&pm660l_l5>; // pm660l_l5 for goodix_fp
-        pinctrl-names = "default";
+		compatible = "goodix,goodix_fp";
+		interrupt-parent = <&tlmm>;
+		interrupts = <121 0>;
+		goodix,gpio_irq = <&tlmm 121 0x1>;
+		goodix,gpio_reset = <&tlmm 80 0x0>;
+		ldo5-supply = <&pm660l_l5>; // pm660l_l5 for goodix_fp
+		pinctrl-names = "default";
         pinctrl-0 = <&gpio_goodix_irq_default>;
     };
    // #endif VENDOR_EDIT
@@ -655,8 +657,8 @@
 						"switch1_act_switch2_sleep", "switch1_sleep_switch2_act",
 						"clock_active","clock_sleep",
 						"data_active","data_sleep",
-						"reset_active","reset_sleep";
-						//"vooc_mcu_id_default";
+						"reset_active","reset_sleep",
+						"vooc_mcu_id_default";
 		pinctrl-0 = <&charging_switch1_active>;
 		pinctrl-1 = <&charging_switch1_sleep >;
 		pinctrl-2 = <&charging_switch1_active>;
@@ -669,16 +671,16 @@
 		pinctrl-9 = <&charging_data_sleep >;
 		pinctrl-10 = <&charging_reset_active >;
 		pinctrl-11 = <&charging_reset_sleep >;
-		//pinctrl-12 = <&vooc_mcu_id_default>;
+		pinctrl-12 = <&vooc_mcu_id_default>;
 
-		qcom,charging_switch1-gpio = <&tlmm 116 0x00>;
+		qcom,charging_switch1-gpio = <&tlmm 40 0x00>;
 		//qcom,charging_switch2-gpio = <&tlmm 113 0x00>;
 		//qcom,charging_switch3-gpio = <&tlmm 38 0x00>;
 
 		qcom,charging_reset-gpio = <&tlmm 91 0x00>;
 		qcom,charging_clock-gpio = <&tlmm 124 0x00>;
 		qcom,charging_data-gpio = <&tlmm 123 0x00>;
-		//qcom,vooc_mcu_id-gpio = <&tlmm 116 0x00>;
+		qcom,vooc_mcu_id-gpio = <&tlmm 116 0x00>;
 	};
 
 	n76e_fastcg@52{
@@ -695,8 +697,8 @@
 						"switch1_act_switch2_sleep", "switch1_sleep_switch2_act",
 						"clock_active","clock_sleep",
 						"data_active","data_sleep",
-						"reset_active","reset_sleep";
-						//"vooc_mcu_id_default";
+						"reset_active","reset_sleep",
+						"vooc_mcu_id_default";
 		pinctrl-0 = <&charging_switch1_active>;
 		pinctrl-1 = <&charging_switch1_sleep>;
 		pinctrl-2 = <&charging_switch1_active>;
@@ -709,16 +711,16 @@
 		pinctrl-9 = <&charging_data_sleep>;
 		pinctrl-10 = <&charging_reset_active>;
 		pinctrl-11 = <&charging_reset_sleep>;
-		//pinctrl-12 = <&vooc_mcu_id_default>;
+		pinctrl-12 = <&vooc_mcu_id_default>;
 
-		qcom,charging_switch1-gpio = <&tlmm 116 0x00>;
+		qcom,charging_switch1-gpio = <&tlmm 40 0x00>;
 		//qcom,charging_switch2-gpio = <&tlmm 113 0x00>;
 		//qcom,charging_switch3-gpio = <&tlmm 38 0x00>;
 
 		qcom,charging_reset-gpio = <&tlmm 91 0x00>;
 		qcom,charging_clock-gpio = <&tlmm 124 0x00>;
 		qcom,charging_data-gpio = <&tlmm 123 0x00>;
-		//qcom,vooc_mcu_id-gpio = <&tlmm 116 0x00>;
+		qcom,vooc_mcu_id-gpio = <&tlmm 116 0x00>;
 	};
 
 	pic16f_fastcg@25{
@@ -731,8 +733,8 @@
 						"switch1_act_switch2_sleep", "switch1_sleep_switch2_act",
 						"clock_active","clock_sleep",
 						"data_active","data_sleep",
-						"reset_active","reset_sleep";
-						//"vooc_mcu_id_default";
+						"reset_active","reset_sleep",
+						"vooc_mcu_id_default";
 		pinctrl-0 = <&charging_switch1_active>;
 		pinctrl-1 = <&charging_switch1_sleep >;
 		pinctrl-2 = <&charging_switch1_active>;
@@ -745,9 +747,9 @@
 		pinctrl-9 = <&charging_data_sleep >;
 		pinctrl-10 = <&charging_reset_active >;
 		pinctrl-11 = <&charging_reset_sleep >;
-		//pinctrl-12 = <&vooc_mcu_id_default>;
+		pinctrl-12 = <&vooc_mcu_id_default>;
 
-		qcom,charging_switch1-gpio = <&tlmm 116 0x00>;
+		qcom,charging_switch1-gpio = <&tlmm 40 0x00>;
 		//qcom,charging_switch2-gpio = <&tlmm 113 0x00>;
 		//qcom,charging_switch3-gpio = <&tlmm 38 0x00>;
 
@@ -762,36 +764,76 @@
 //Fei.Mo@PSW.BSP.Sensor 2018-01-11 add for dhall device and motor control
 &qupv3_se4_i2c {
 	status = "okay";
-	dhall0-m1120@0c {
+	dhall0-m1120@0f {
 		compatible = "oppo,dhall-m1120";
-		reg = <0x0c>;
+		reg = <0x0f>;
 		pinctrl-names = "hall_power_down","hall_power_up","hall0_interrupt_input";
 		pinctrl-0 = <&hall_power_down>;
 		pinctrl-1 = <&hall_power_up>;
 		pinctrl-2 = <&hall0_interrupt_input>;
 		interrupt-parent = <&tlmm>;
-		interrupts = <122 0x2>;
-		dhall,irq-gpio = <&tlmm 122 0x2008>;
+		interrupts = <117 0x2>;
+		dhall,irq-gpio = <&tlmm 117 0x2008>;
 		dhall,id = <0>;
 		vdd_2v8-supply = <&pm660l_l3>;//VREG_L3B_3P0
 		vcc_1v8-supply = <&pm660_l14>;//VREG_L14A_1P8
 		qcom,hall-power-gpio = <&tlmm 65 0>;
+		hall,bias_support;
+		hall,bias-ratio = <80>;// current/goal *100
 	};
 
-	dhall1-m1120@0f {
+	dhall1-m1120@0c {
 		compatible = "oppo,dhall-m1120";
-		reg = <0x0f>;
+		reg = <0x0c>;
 		pinctrl-names = "hall_power_down","hall_power_up","hall1_interrupt_input";
 		pinctrl-0 = <&hall_power_down>;
 		pinctrl-1 = <&hall_power_up>;
 		pinctrl-2 = <&hall1_interrupt_input>;
 		interrupt-parent = <&tlmm>;
-		interrupts = <42 0x2>;
-		dhall,irq-gpio = <&tlmm 42 0x2008>;
+		interrupts = <122 0x2>;
+		dhall,irq-gpio = <&tlmm 122 0x2008>;
 		dhall,id = <1>;
 		vdd_2v8-supply = <&pm660l_l3>;//VREG_L19A_3P0
 		vcc_1v8-supply = <&pm660_l14>;//VREG_S4A_1P8
 		qcom,hall-power-gpio = <&tlmm 65 0>;
+		hall,bias_support;
+		hall,bias-ratio = <80>;// current/goal *100
+	};
+
+	dhall0-ist8801@0f {
+		compatible = "oppo,dhall-ist8801";
+		reg = <0x0D>;
+		pinctrl-names = "hall_power_down","hall_power_up","hall0_interrupt_input";
+		pinctrl-0 = <&hall_power_down>;
+		pinctrl-1 = <&hall_power_up>;
+		pinctrl-2 = <&hall0_interrupt_input>;
+		interrupt-parent = <&tlmm>;
+		interrupts = <117 0x2>;
+		dhall,irq-gpio = <&tlmm 117 0x2008>;
+		dhall,id = <0>;
+		vdd_2v8-supply = <&pm660l_l3>;//VREG_L3B_3P0
+		vcc_1v8-supply = <&pm660_l14>;//VREG_L14A_1P8
+		qcom,hall-power-gpio = <&tlmm 65 0>;
+		hall,bias_support;
+		hall,bias-ratio = <80>;// current/goal *100
+	};
+
+	dhall1-ist8801@0c {
+		compatible = "oppo,dhall-ist8801";
+		reg = <0x0E>;
+		pinctrl-names = "hall_power_down","hall_power_up","hall1_interrupt_input";
+		pinctrl-0 = <&hall_power_down>;
+		pinctrl-1 = <&hall_power_up>;
+		pinctrl-2 = <&hall1_interrupt_input>;
+		interrupt-parent = <&tlmm>;
+		interrupts = <122 0x2>;
+		dhall,irq-gpio = <&tlmm 122 0x2008>;
+		dhall,id = <1>;
+		vdd_2v8-supply = <&pm660l_l3>;//VREG_L19A_3P0
+		vcc_1v8-supply = <&pm660_l14>;//VREG_S4A_1P8
+		qcom,hall-power-gpio = <&tlmm 65 0>;
+		hall,bias_support;
+		hall,bias-ratio = <80>;// current/goal *100
 	};
 };
 
@@ -863,11 +905,11 @@
 &tlmm {
 	standby_gpio: standby_gpio {
 		mux {
-			//pins = "gpio44";
+			pins = "gpio44";
 			function = "gpio";
 		};
 		config {
-			//pins = "gpio44";
+			pins = "gpio44";
 			drive-strength = <2>;
 			bias-disable;
 			output-low;
@@ -954,12 +996,12 @@
 	};
 	hall0_interrupt_input: hall0_interrupt_input {
 		mux {
-			pins = "gpio122";
+			pins = "gpio117";
 			function = "gpio";
 		};
 
 		config {
-			pins = "gpio122";
+			pins = "gpio117";
 			drive-strength = <2>;
 			input-enable;
 			bias-pull-up; //Pull up
@@ -967,12 +1009,12 @@
 	};
 	hall1_interrupt_input: hall1_interrupt_input {
 		mux {
-			pins = "gpio42";
+			pins = "gpio122";
 			function = "gpio";
 		};
 
 		config {
-			pins = "gpio42";
+			pins = "gpio122";
 			drive-strength = <2>;
 			input-enable;
 			bias-pull-up; //Pull up
@@ -991,23 +1033,23 @@
 		pinctrl-0 = <&free_fall_input>;
 		hall-irq-pos = <170>;
 		motor-retard-pos = <430>;
-		terminal-offset = <7 34>;
-		delay-cycle = <13 30 23>; //ms
+		delay-cycle = <14 14 14>; //ms
 		slow-delay-cycle = <28 28 28>; //ms
-		full-speed-param = <68 15500>;
-		up-speed-param = <25 15500>;
-		down-speed-param = <2 156250>;
-		slow-full-speed-param = <58 31250>;
-		slow-up-speed-param = <15 104166>;
-		slow-down-speed-param = <2 156250>;
-		stop-neg-point = <4 4>;
-		stop-pos-point = <4 4>;
+		full-speed-param = <65 12000>;
+		up-speed-param = <5 12000>;
+		down-speed-param = <3 156250>;
+		nodetect-speed-param = <15 12000>;
+		slow-full-speed-param = <60 31250>;
+		slow-up-speed-param = <5 104166>;
+		slow-down-speed-param = <3 156250>;
+		slow-nodetect-speed-param = <15 104166>;
+		stop-neg-point = <3 3>;
+		stop-pos-point = <3 3>;
+		pos-change-thrd = <300 350>;
 		hall-data-sign = <0>;//1 represent positive ,0 represent negative
 		press-irq-makeup = <55 55>;
-		extre_stop_support;
-		monotonicity-offset = <25>;
-		cali-retard-offset = <15 40>;
-		hall-max-thrd = <0 0>;
+		stop-retry = <4>;
+		stop_in_advance;
 		/*
 		support mag noise decrease:
 		511 - pattern[0] = irq_max
@@ -1017,7 +1059,7 @@
 		average = 200
 		*/
 		mag_noise_support;
-		mag_noise_pattern = <100 513 1 513 200 1 1>;
+		mag_noise_pattern = <80 400 0 662 200 100 100>;
 	};
 	motor_drv1: motor_drv1 {
 		compatible = "motor_drv-220";
@@ -1033,7 +1075,7 @@
 		pinctrl-8 = <&boost_sleep>;
 		pwms = <&pm660l_pwm_4 0 0>;
 		boost-gpio = <&pm660_gpios 11 0x00>;
-		//standby-gpio = <&tlmm 44 0>;
+		standby-gpio = <&tlmm 44 0>;
 		dir-gpio = <&tlmm 94 0>;
 		enable-gpio =  <&tlmm 43 0>;
 		step-gpio = <&pm660l_gpios 6 0>;

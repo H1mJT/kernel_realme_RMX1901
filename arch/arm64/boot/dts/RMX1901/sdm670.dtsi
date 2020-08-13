@@ -506,79 +506,17 @@
 		removed_region: removed_region@85fc0000 {
 			compatible = "removed-dma-pool";
 			no-map;
-			//luoshengwang@BSP.FINGERPRINT.BASIC, 2019/8/15, add for enlarge tz memory to 65M start
+			//luhongyu@BSP.Fingerprint.Basic, 2018/10/31, add to enlarge memory of tz to 60M start
 			//#ifndef VENDOR_EDIT
 			//reg = <0 0x85fc0000 0 0x2f40000>;
 			//#else
-			//reg = <0 0x85fc0000 0 0x4940000>;
-			reg = <0 0x85fc0000 0 0x4E40000>;
+			reg = <0 0x85fc0000 0 0x4940000>;
 			//#endif /* VENDOR_EDIT */
-			//luoshengwang@BSP.FINGERPRINT.BASIC, 2019/8/15, add for enlarge tz memory to 65M end
+			//luhongyu@BSP.Fingerprint.Basic, 2018/10/31, add to enlarge memory of tz to 60M end
 		};
 
 // #ifdef VENDOR_EDIT
 // #wanghao@BSP.Kernel.Driver, 2018/07/05, Add for enlarge memory of Modem to 150M
-// #luoshengwang@BSP.FINGERPRINT.BASIC, 2019/8/15, add for enlarge tz memory to 65M start
-		pil_camera_mem: camera_region@8b300000 {
-			compatible = "removed-dma-pool";
-			no-map;
-			reg = <0 0x8b300000 0 0x500000>;
-		};
-
-		pil_modem_mem: modem_region@8b800000 {
-			compatible = "removed-dma-pool";
-			no-map;
-			reg = <0 0x8b800000 0 0x9600000>;
-		};
-
-		pil_video_mem: pil_video_region@94e00000 {
-			compatible = "removed-dma-pool";
-			no-map;
-			reg = <0 0x94e00000 0 0x500000>;
-		};
-
-		wlan_msa_mem: wlan_msa_region@95300000 {
-			compatible = "removed-dma-pool";
-			no-map;
-			reg = <0 0x95300000 0 0x100000>;
-		};
-// luhongyu@BSP.Fingerprint.Secure 2018/12/26, add for secure dsp
-		pil_cdsp_mem: cdsp_regions@95400000 {
-			compatible = "removed-dma-pool";
-			no-map;
-			reg = <0 0x95400000 0 0x1e00000>;
-		};
-
-		pil_mba_mem: pil_mba_region@0x97200000 {
-			compatible = "removed-dma-pool";
-			no-map;
-			reg = <0 0x97200000 0 0x200000>;
-		};
-
-		pil_adsp_mem: pil_adsp_region@0x97400000 {
-			compatible = "removed-dma-pool";
-			no-map;
-			reg = <0 0x97400000 0 0x1e00000>;
-		};
-
-		pil_ipa_fw_mem: ips_fw_region@0x99200000 {
-			compatible = "removed-dma-pool";
-			no-map;
-			reg = <0 0x99200000 0 0x10000>;
-		};
-
-		pil_ipa_gsi_mem: ipa_gsi_region@0x99210000 {
-			compatible = "removed-dma-pool";
-			no-map;
-			reg = <0 0x99210000 0 0x5000>;
-		};
-
-		pil_gpu_mem: gpu_region@0x99215000 {
-			compatible = "removed-dma-pool";
-			no-map;
-			reg = <0 0x99215000 0 0x2000>;
-		};
-/*
 		pil_camera_mem: camera_region@8ab00000 {
 			compatible = "removed-dma-pool";
 			no-map;
@@ -639,8 +577,6 @@
 			no-map;
 			reg = <0 0x98a15000 0 0x2000>;
 		};
-*/
-// #luoshengwang@BSP.FINGERPRINT.BASIC, 2019/8/15, add for enlarge tz memory to 65M end
 // #else
 /********
 		pil_cdsp_mem: cdsp_regions@94C00000 {
@@ -1088,14 +1024,13 @@
 
 	qcom_seecom: qseecom@86d00000 {
 		compatible = "qcom,qseecom";
-		//luoshengwang@BSP.FINGERPRINT.BASIC, 2019/8/15, add for enlarge tz memory to 65M start
+		//luhongyu@BSP.Fingerprint.Basic, 2018/10/10, add to enlarge memory of tz to 60M start
 		//#ifndef VENDOR_EDIT
 		//reg = <0x86d00000 0x2200000>;
 		//#else
-		//reg = <0x86d00000 0x03C00000>;
-		reg = <0x86d00000 0x04100000>;
+		reg = <0x86d00000 0x03C00000>;
 		//#endif /* VENDOR_EDIT */
-		//luoshengwang@BSP.FINGERPRINT.BASIC, 2019/8/15, add for enlarge tz memory to 65M end
+		//luhongyu@BSP.Fingerprint.Basic, 2018/10/10, add to enlarge memory of tz to 60M end
 		reg-names = "secapp-region";
 		qcom,hlos-num-ce-hw-instances = <1>;
 		qcom,hlos-ce-hw-instance = <0>;

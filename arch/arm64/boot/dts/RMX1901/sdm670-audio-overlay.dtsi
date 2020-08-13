@@ -190,13 +190,7 @@
 	/* #endif VENDOR_EDIT */
 
 	/* #ifdef VENDOR_EDIT */
-	/* Jianfeng.Qiu@PSW.MM.AudioDriver.Machine, 2018/04/23, Add for audio to use lpi gpio */
-	qcom,sec-mi2s-gpios = <&sec_mi2s_gpios>;
-	/* #endif VENDOR_EDIT */
-
-	/* #ifdef VENDOR_EDIT */
-	/* Jianfeng.Qiu@PSW.MM.AudioDriver.Machine, 2017/01/23, Add for custom audio. */
-	oppo,headphone-pa = "akm";
+	/* Wang.kun@PSW.MM.AudioDriver.Machine, 2018/12/5, Add for custom audio. */
 	oppo,speaker-pa = "nxp";
 	/* #endif VENDOR_EDIT */
 };
@@ -254,17 +248,6 @@
 		pinctrl-0 = <&sdw_clk_active &sdw_data_active>;
 		pinctrl-1 = <&sdw_clk_sleep &sdw_data_sleep>;
 	};
-
-	/* #ifdef VENDOR_EDIT */
-	/* Jianfeng.Qiu@PSW.MM.AudioDriver.Machine, 2018/04/23, Add for audio to use lpi gpio */
-	sec_mi2s_gpios: sec_pinctrl {
-		compatible = "qcom,msm-cdc-pinctrl";
-		pinctrl-names = "aud_active", "aud_sleep";
-		pinctrl-0 = <&sec_mi2s_bclk_active &sec_mi2s_ws_active &sec_mi2s_sd0_active>;
-		pinctrl-1 = <&sec_mi2s_bclk_sleep &sec_mi2s_ws_sleep &sec_mi2s_sd0_sleep>;
-		qcom,lpi-gpios;
-	};
-	/* #endif VENDOR_EDIT */
 
 	wsa_spkr_en1: wsa_spkr_en1_pinctrl {
 		/* #ifndef VENDOR_EDIT */
@@ -460,17 +443,6 @@
 
 /* #ifdef VENDOR_EDIT */
 /* Jianfeng.Qiu@PSW.MM.AudioDriver.Machine, 2018/04/18, Add for audio config */
-//for ak4376
-&dai_mi2s1 {
-	compatible = "qcom,msm-dai-q6-mi2s";
-	qcom,msm-dai-q6-mi2s-dev-id = <1>;
-	qcom,msm-mi2s-rx-lines = <1>;
-	qcom,msm-mi2s-tx-lines = <0>;
-	pinctrl-names = "default", "sleep";
-	pinctrl-0 = <&sec_mi2s_mclk_active>;
-	pinctrl-1 = <&sec_mi2s_mclk_sleep>;
-};
-
 //for tfa98xx
 &dai_mi2s2 {
 	compatible = "qcom,msm-dai-q6-mi2s";

@@ -19,5 +19,5 @@
 	compatible = "qcom,sdm670";
 	qcom,board-id = <0 0>;
 	/*oppo,prjversion. first one is the count of projects*/
-	oppo,prjversion = <1 19651>;
+	oppo,prjversion = <1 18041>;
 };

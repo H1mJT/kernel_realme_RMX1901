@@ -13,6 +13,7 @@
 #dts-dirs += mediatek
 #dts-dirs += nvidia
 dts-dirs += qcom
+dts-dirs += RMX1901
 #dts-dirs += renesas
 #dts-dirs += rockchip
 #dts-dirs += socionext

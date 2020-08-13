@@ -11,13 +11,13 @@
  */
 
 &mdss_mdp {
-	dsi_rm19651samsung_ams641rw01_1080_2340_cmd: qcom,mdss_dsi_rm19651samsung_ams641rw01_1080_2340_cmd {
+	dsi_oppo18041samsung_ams653tk01_1080_2340_cmd: qcom,mdss_dsi_oppo18041samsung_ams653tk01_1080_2340_cmd {
 		qcom,panel-supply-entries = <&dsi_panel_pwr_supply_labibb_amoled>;
 
 		qcom,platform-te-gpio = <&tlmm 10 0>;
 		qcom,platform-reset-gpio = <&tlmm 26 0>;
 
-		qcom,mdss-dsi-panel-name = "rm19651samsung ams641rw01 1080 2340 cmd mode dsi panel";
+		qcom,mdss-dsi-panel-name = "oppo18041samsung ams653tk01 1080 2340 cmd mode dsi panel";
 		qcom,mdss-dsi-panel-type = "dsi_cmd_mode";
 		qcom,mdss-dsi-virtual-channel-id = <0>;
 		qcom,mdss-dsi-stream = <0>;
@@ -33,13 +33,13 @@
 		qcom,mdss-dsi-lane-1-state;
 		qcom,mdss-dsi-lane-2-state;
 		qcom,mdss-dsi-lane-3-state;
-		qcom,mdss-pan-physical-width-dimension = <68>;
-		qcom,mdss-pan-physical-height-dimension = <152>;
-		qcom,mdss-dsi-reset-sequence = <1 5>, <0 2>, <1 1>;
+		qcom,mdss-pan-physical-width-dimension = <69>;
+		qcom,mdss-pan-physical-height-dimension = <148>;
+		qcom,mdss-dsi-reset-sequence = <1 10>, <0 5>, <1 10>;
 		qcom,mdss-dsi-dma-trigger = "trigger_sw";
 		qcom,mdss-dsi-mdp-trigger = "none";
-		qcom,mdss-dsi-t-clk-post = <0x1a>;
-		qcom,mdss-dsi-t-clk-pre = <0x39>;
+		qcom,mdss-dsi-t-clk-post = <0x0f>;
+		qcom,mdss-dsi-t-clk-pre = <0x38>;
 		qcom,mdss-dsi-wr-mem-start = <0x2c>;
 		qcom,mdss-dsi-wr-mem-continue = <0x3c>;
 		qcom,mdss-dsi-te-pin-select = <1>;
@@ -48,8 +48,8 @@
 		qcom,mdss-dsi-te-using-te-pin;
 		qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
 		qcom,mdss-dsi-bl-min-level = <1>;
-		qcom,mdss-dsi-bl-max-level = <2047>;
-		qcom,mdss-brightness-max-level = <2047>;
+		qcom,mdss-dsi-bl-max-level = <1023>;
+		qcom,mdss-brightness-max-level = <1023>;
 		qcom,mdss-dsi-panel-jitter = <0x4 0x1>;
 
 		qcom,esd-check-enabled;
@@ -60,22 +60,22 @@
 		qcom,mdss-dsi-panel-status-value = <0x9F>;
 		qcom,mdss-dsi-panel-on-check-value = <0x9F>;
 		qcom,mdss-dsi-panel-hdr-enabled;
-		qcom,mdss-dsi-panel-hdr-color-primaries = <15000 15500 34000
-		16000 13250 34500 7500 3000>;
-		qcom,mdss-dsi-panel-peak-brightness = <5000000>;
-		qcom,mdss-dsi-panel-blackness-level = <84>;
+		qcom,mdss-dsi-panel-hdr-color-primaries = <15000 15500 32100
+		16300 13250 34500 7500 3000>;
+		qcom,mdss-dsi-panel-peak-brightness = <4300000>;
+		qcom,mdss-dsi-panel-blackness-level = <1023>;
 		qcom,mdss-dsi-display-timings {
 			timing@0{
 				qcom,mdss-dsi-panel-width = <1080>;
 				qcom,mdss-dsi-panel-height = <2340>;
-				qcom,mdss-dsi-h-front-porch = <72>;
-				qcom,mdss-dsi-h-back-porch = <64>;
+				qcom,mdss-dsi-h-front-porch = <48>;
+				qcom,mdss-dsi-h-back-porch = <48>;
 				qcom,mdss-dsi-h-pulse-width = <24>;
 				qcom,mdss-dsi-h-sync-skew = <0>;
-				qcom,mdss-dsi-v-back-porch = <20>;
-				qcom,mdss-dsi-v-front-porch = <16>;
+				qcom,mdss-dsi-v-back-porch = <16>;
+				qcom,mdss-dsi-v-front-porch = <20>;
 				qcom,mdss-dsi-v-pulse-width = <4>;
-				qcom,mdss-dsi-panel-framerate = <65>;
+				qcom,mdss-dsi-panel-framerate = <60>;
 				qcom,mdss-dsi-panel-clockrate = <1107000000>;
 				qcom,mdss-dsi-panel-phy-timings = [00 24 0A 0A 26 24 0A 0A 07 02 04 00];
 				qcom,display-topology = <1 0 1>;
@@ -85,6 +85,11 @@
 					39 01 00 00 00 00 03 9F A5 A5
 					05 01 00 00 05 00 01 11
 					39 01 00 00 00 00 03 9F 5A 5A
+					/* FD setting */
+					39 01 00 00 00 00 03 F0 5A 5A
+					15 01 00 00 00 00 02 B0 01
+					15 01 00 00 00 00 02 CD 01
+                                        39 01 00 00 14 00 03 F0 A5 A5
 					/* TE vsync ON */
 					39 01 00 00 00 00 03 9F A5 A5
 					15 01 00 00 00 00 02 35 00
@@ -95,7 +100,7 @@
 					39 01 00 00 00 00 03 F0 A5 A5
 					/* CASET/PASET Setting */
 					39 01 00 00 00 00 05 2A 00 00 04 37
-					39 01 00 00 00 00 05 2B 00 00 09 5F
+					39 01 00 00 00 00 05 2B 00 00 09 23
 					/* ESD Setting */
 					39 01 00 00 00 00 03 FC 5A 5A
 					15 01 00 00 00 00 02 B0 01
@@ -103,6 +108,11 @@
 					15 01 00 00 00 00 02 B0 07
 					15 01 00 00 00 00 02 ED 67
 					39 01 00 00 3C 00 03 FC A5 A5
+					/* Backlight Dimming Setting */
+					39 01 00 00 00 00 03 F0 5A 5A
+					15 01 00 00 00 00 02 B0 08
+					15 01 00 00 00 00 02 B7 12
+					39 01 00 00 00 00 03 F0 A5 A5
 					15 01 00 00 00 00 02 53 20
 					/* ACL off */
 					15 01 00 00 00 00 02 55 00
@@ -110,24 +120,27 @@
 					15 01 00 00 00 00 02 B0 DE
 					15 01 00 00 00 00 02 B9 00
 					39 01 00 00 00 00 03 F0 A5 A5
-					/* CRC mode enable */
-					39 01 00 00 00 00 02 81 90
+					/* Seed CRC mode enable */
+					15 01 00 00 00 00 02 81 90
 					39 01 00 00 00 00 03 F0 5A 5A
-					39 01 00 00 00 00 02 B0 02
-					39 01 00 00 00 00 16 B1 DD 00 00 16 E8 01 0F 09 FF 28 FF E8 FA 08 E4 F4 EC 01 FF FF FF  /* CRC LUT */
+					15 01 00 00 00 00 02 B0 02
+					39 01 00 00 00 00 16 B1 E0 00 08 1C F8 00 04 0F FF 24 FD DC FD 00 F6 F1 F0 00 FF FF FF  /* CRC LUT */
 					39 01 00 00 00 00 03 B1 00 00
 					39 01 00 00 00 00 03 F0 A5 A5
-					39 01 00 00 00 00 03 F0 5A 5A  /* Seed Tcs On */
-					39 01 00 00 00 00 02 B0 23
-					39 01 00 00 00 00 02 B3 91
-					39 01 00 00 00 00 02 83 80
+					/* Seed Tcs On */
+					39 01 00 00 00 00 03 F0 5A 5A
+					15 01 00 00 00 00 02 B0 23
+					15 01 00 00 00 00 02 B3 91
+					15 01 00 00 00 00 02 83 80
 					39 01 00 00 00 00 03 B3 00 C0
-					39 01 00 00 00 00 03 F0 A5 A5];
+					39 01 00 00 00 00 03 F0 A5 A5
+                                        ];
 				qcom,mdss-dsi-post-on-backlight = [
 					39 01 00 00 00 00 03 9F A5 A5
 					05 01 00 00 00 00 01 29
 					05 01 00 00 00 00 01 13
-					39 01 00 00 00 00 03 9F 5A 5A];
+					39 01 00 00 00 00 03 9F 5A 5A
+                                        ];
 				qcom,mdss-dsi-off-command = [
 					39 01 00 00 00 00 03 9F A5 A5
 					05 01 00 00 0A 00 01 28
@@ -136,52 +149,63 @@
 					39 01 00 00 00 00 03 F0 5A 5A
 					15 01 00 00 00 00 02 B0 05
 					15 01 00 00 00 00 02 F4 01
-					39 01 00 00 96 00 03 F0 A5 A5];
+					39 01 00 00 96 00 03 F0 A5 A5
+                                        ];
 				qcom,mdss-dsi-lp1-command = [    /* AOD ON */
+					/* display off & sleep in */
 					39 01 00 00 00 00 03 9F A5 A5
 					05 01 00 00 0A 00 01 28
 					05 01 00 00 00 00 01 10
 					39 01 00 00 00 00 03 9F 5A 5A
+					/* VCI stabilizationg setting */
 					39 01 00 00 00 00 03 F0 5A 5A
 					15 01 00 00 00 00 02 B0 05
 					15 01 00 00 00 00 02 F4 01
 					39 01 00 00 78 00 03 F0 A5 A5
+					/* sleep out */
 					39 01 00 00 00 00 03 9F A5 A5
 					05 01 00 00 05 00 01 11
 					39 01 00 00 00 00 03 9F 5A 5A
 					/* AOD ON */
 					39 01 00 00 00 00 03 F0 5A 5A
-					15 01 00 00 00 00 02 53 22
+					15 01 00 00 00 00 02 53 23
 					15 01 00 00 00 00 02 B0 A5
 					15 01 00 00 73 00 02 C7 00
 					39 01 00 00 00 00 03 F0 A5 A5
-					/* CRC mode enable */
-					39 01 00 00 00 00 02 81 90
+					/* Seed CRC mode enable */
+					15 01 00 00 00 00 02 81 90
 					39 01 00 00 00 00 03 F0 5A 5A
-					39 01 00 00 00 00 02 B0 02
-					39 01 00 00 00 00 16 B1 DD 00 00 16 E8 01 0F 09 FF 28 FF E8 FA 08 E4 F4 EC 01 FF FF FF  /* CRC LUT */
+					15 01 00 00 00 00 02 B0 02
+					39 01 00 00 00 00 16 B1 E0 00 08 1C F8 00 04 0F FF 24 FD DC FD 00 F6 F1 F0 00 FF FF FF  /* CRC LUT */
 					39 01 00 00 00 00 03 B1 00 00
 					39 01 00 00 00 00 03 F0 A5 A5
-					39 01 00 00 00 00 03 F0 5A 5A  /* Seed Tcs On */
-					39 01 00 00 00 00 02 B0 23
-					39 01 00 00 00 00 02 B3 91
-					39 01 00 00 00 00 02 83 80
+					/* Seed Tcs On */
+					39 01 00 00 00 00 03 F0 5A 5A
+					15 01 00 00 00 00 02 B0 23
+					15 01 00 00 00 00 02 B3 91
+					15 01 00 00 00 00 02 83 80
 					39 01 00 00 00 00 03 B3 00 C0
-					39 01 00 00 00 00 03 F0 A5 A5];
+					39 01 00 00 00 00 03 F0 A5 A5
+                                        ];
 				qcom,mdss-dsi-nolp-command = [    /* AOD OFF */
 					/*AOD OFF*/
-					39 01 00 00 00 00 02 53 20
+					39 01 00 00 00 00 02 53 28
 					/* TE vsync ON */
 					39 01 00 00 00 00 03 9F A5 A5
 					15 01 00 00 00 00 02 35 00
 					39 01 00 00 00 00 03 9F 5A 5A
+					/* FD setting */
+					39 01 00 00 00 00 03 F0 5A 5A
+					15 01 00 00 00 00 02 B0 01
+					15 01 00 00 00 00 02 CD 01
+					39 01 00 00 00 00 03 F0 A5 A5
 					/* MIC Setting */
 					39 01 00 00 00 00 03 F0 5A 5A
 					39 01 00 00 00 00 08 EB 17 41 92 0E 10 82 5A
 					39 01 00 00 00 00 03 F0 A5 A5
 					/* CASET/PASET Setting */
 					39 01 00 00 00 00 05 2A 00 00 04 37
-					39 01 00 00 00 00 05 2B 00 00 09 5F
+					39 01 00 00 00 00 05 2B 00 00 09 23
 					/* ESD Setting */
 					39 01 00 00 00 00 03 FC 5A 5A
 					15 01 00 00 00 00 02 B0 01
@@ -189,6 +213,14 @@
 					15 01 00 00 00 00 02 B0 07
 					15 01 00 00 00 00 02 ED 67
 					39 01 00 00 00 00 03 FC A5 A5
+					/* Backlight Dimming Setting */
+					39 01 00 00 00 00 03 F0 5A 5A
+					15 01 00 00 00 00 02 B0 08
+					15 01 00 00 00 00 02 B7 12
+					39 01 00 00 00 00 03 BD 00 02
+					39 01 00 00 00 00 03 F0 A5 A5
+					/*AOD OFF*/
+					15 01 00 00 00 00 02 53 20
 					/* ACL off */
 					15 01 00 00 00 00 02 55 00
 					39 01 00 00 00 00 03 F0 5A 5A
@@ -199,99 +231,105 @@
 					39 01 00 00 00 00 03 9F A5 A5
 					05 01 00 00 00 00 01 13
 					05 01 00 00 00 00 01 29
-					39 01 00 00 00 00 03 9F 5A 5A];
+					39 01 00 00 00 00 03 9F 5A 5A
+                                        ];
 				qcom,mdss-dsi-aod-hbm-on-command = [  /*AOD->HBM ON PANEL FINGERPRINT OFF*/
-					39 01 00 00 00 00 03 F0 5A 5A
+					/* HBM 600 nit */
+					39 01 00 00 00 00 03 9F A5 A5
 					39 01 00 00 00 00 03 51 03 FF
 					15 01 00 00 00 00 02 53 E0
+					39 01 00 00 00 00 03 9F 5A 5A
 					/* HBM 670 ON */
-					39 01 00 00 00 00 03 BD 00 02
-					39 01 00 00 00 00 03 F0 A5 A5];
+					39 01 00 00 00 00 03 F0 5A 5A
+					39 01 00 00 00 00 03 BD 00 00
+					39 01 00 00 00 00 03 F0 A5 A5
+                                        ];
 				qcom,mdss-dsi-aod-hbm-off-command = [  /*AOD->HBM OFF PANEL FINGERPRINT OFF*/
 					39 01 00 00 00 00 03 F0 5A 5A
 					39 01 00 00 00 00 03 BD 00 02
 					39 01 00 00 00 00 03 F0 A5 A5
 					39 01 00 00 00 00 03 51 00 01
-					15 01 00 00 00 00 02 53 22];
+					15 01 00 00 00 00 02 53 22
+                                        ];
 				qcom,mdss-dsi-hbm-on-command = [
-					39 01 00 00 00 00 03 F0 5A 5A
-					15 01 00 00 00 00 02 53 E0
-					/* HBM 700 ON */
+					/* HBM 600 nit */
+					39 01 00 00 00 00 03 9F A5 A5
 					39 01 00 00 00 00 03 51 03 FF
-					39 01 00 00 00 00 03 BD 00 02
-					39 01 00 00 22 00 03 F0 A5 A5];
+					15 01 00 00 00 00 02 53 E0
+					39 01 00 00 00 00 03 9F 5A 5A
+					/* HBM 670 ON */
+					39 01 00 00 00 00 03 F0 5A 5A
+					39 01 00 00 00 00 03 BD 00 00
+					39 01 00 00 22 00 03 F0 A5 A5
+                                        ];
 				qcom,mdss-dsi-hbm-off-command = [
 					39 01 00 00 00 00 03 F0 5A 5A
 					39 01 00 00 00 00 03 BD 00 02
 					39 01 00 00 00 00 03 F0 A5 A5
-					15 01 00 00 00 00 02 53 20];
+					15 01 00 00 00 00 02 53 20
+                                        ];
 				qcom,mdss-dsi-normal-hbm-on-command = [
-					39 01 00 00 00 00 03 F0 5A 5A
-					15 01 00 00 00 00 02 53 E8
-					/* HBM ON 700nit*/
+					/* HBM 600 nit */
+					39 01 00 00 00 00 03 9F A5 A5
 					39 01 00 00 00 00 03 51 03 FF
-					39 01 00 00 00 00 03 BD 00 02
-					39 01 00 00 00 00 03 F0 A5 A5];
-				qcom,mdss-dsi-normal-652nit-hbm-on-command = [
+					15 01 00 00 00 00 02 53 E0
+					39 01 00 00 00 00 03 9F 5A 5A
+					/* HBM ON 600nit*/
 					39 01 00 00 00 00 03 F0 5A 5A
-					15 01 00 00 00 00 02 53 E8
-					/* HBM ON 652nit*/
-					39 01 00 00 00 00 03 51 01 2A
 					39 01 00 00 00 00 03 BD 00 02
-					39 01 00 00 00 00 03 F0 A5 A5];
-				qcom,mdss-dsi-normal-573nit-hbm-on-command = [
-					39 01 00 00 00 00 03 F0 5A 5A
-					15 01 00 00 00 00 02 53 E8
-					/* HBM ON 573nit*/
-					39 01 00 00 00 00 03 51 00 78
-					39 01 00 00 00 00 03 BD 00 02
-					39 01 00 00 00 00 03 F0 A5 A5];
+					39 01 00 00 00 00 03 F0 A5 A5
+                                        ];
 				qcom,mdss-dsi-aod-high-mode-command = [
 					/* AOD 50nit */
 					39 01 00 00 00 00 03 F0 5A 5A
 					15 01 00 00 00 00 02 53 22
 					15 01 00 00 00 00 02 B0 A5
 					15 01 00 00 00 00 02 C7 00
-					39 01 00 00 00 00 03 F0 A5 A5];
+					39 01 00 00 00 00 03 F0 A5 A5
+                                        ];
 				qcom,mdss-dsi-aod-low-mode-command = [
 					/* AOD 10nit */
 					39 01 00 00 00 00 03 F0 5A 5A
 					15 01 00 00 00 00 02 53 23
 					15 01 00 00 00 00 02 B0 A5
 					15 01 00 00 00 00 02 C7 00
-					39 01 00 00 00 00 03 F0 A5 A5];
+					39 01 00 00 00 00 03 F0 A5 A5
+                                        ];
 				qcom,mdss-dsi-seed-off-command = [
-					39 01 00 00 00 00 02 81 00
+					15 01 00 00 00 00 02 81 00
 					39 01 00 00 00 00 03 F0 5A 5A
 					39 01 00 00 00 00 03 B1 00 01  /* SEED CRC OFF */
 					39 01 00 00 00 00 03 B3 00 C1  /* TCS OFF */
-					39 01 00 00 00 00 03 F0 A5 A5];
-				qcom,mdss-dsi-seed-0-command = [
-					39 01 00 00 00 00 02 81 90  /* CRC mode enable */
+					39 01 00 00 00 00 03 F0 A5 A5
+                                        ];
+				qcom,mdss-dsi-seed-srgb-command = [
+					15 01 00 00 00 00 02 81 90  /* CRC mode enable */
 					39 01 00 00 00 00 03 F0 5A 5A
-					39 01 00 00 00 00 02 B0 02
-					39 01 00 00 00 00 16 B1 DD 00 00 16 E8 01 0F 09 FF 28 FF E8 FA 08 E4 F4 EC 01 FF FF FF  /* CRC LUT */
+					15 01 00 00 00 00 02 B0 02
+					39 01 00 00 00 00 16 B1 E0 00 08 1C F8 00 04 0F FF 24 FD DC FD 00 F6 F1 F0 00 FF FF FF  /* CRC LUT */
 					39 01 00 00 00 00 03 B1 00 00
 					39 01 00 00 00 00 03 F0 A5 A5
 					39 01 00 00 00 00 03 F0 5A 5A  /* Seed Tcs On */
-					39 01 00 00 00 00 02 B0 23
-					39 01 00 00 00 00 02 B3 91
-					39 01 00 00 00 00 02 83 80
+					15 01 00 00 00 00 02 B0 23
+					15 01 00 00 00 00 02 B3 91
+					15 01 00 00 00 00 02 83 80
 					39 01 00 00 00 00 03 B3 00 C0
-					39 01 00 00 00 00 03 F0 A5 A5];
-				qcom,mdss-dsi-seed-1-command = [
-					39 01 00 00 00 00 02 81 90  /* CRC mode enable */
+					39 01 00 00 00 00 03 F0 A5 A5
+                                        ];
+				qcom,mdss-dsi-seed-dcip3-command = [
+					15 01 00 00 00 00 02 81 90  /* CRC mode enable */
 					39 01 00 00 00 00 03 F0 5A 5A
-					39 01 00 00 00 00 02 B0 02
-					39 01 00 00 00 00 16 B1 B8 0B 05 3F CD 15 0A 07 C8 52 EC D6 D0 16 D0 E8 E3 1C FF FF FF  /* CRC LUT */
+					15 01 00 00 00 00 02 B0 02
+					39 01 00 00 00 00 16 B1 E0 00 08 1C F8 00 04 0F FF 24 FD DC FD 00 F6 F1 F0 00 FF FF FF  /* CRC LUT */
 					39 01 00 00 00 00 03 B1 00 00
 					39 01 00 00 00 00 03 F0 A5 A5
 					39 01 00 00 00 00 03 F0 5A 5A  /* Seed Tcs On */
-					39 01 00 00 00 00 02 B0 23
-					39 01 00 00 00 00 02 B3 91
-					39 01 00 00 00 00 02 83 80
+					15 01 00 00 00 00 02 B0 23
+					15 01 00 00 00 00 02 B3 91
+					15 01 00 00 00 00 02 83 80
 					39 01 00 00 00 00 03 B3 00 C0
-					39 01 00 00 00 00 03 F0 A5 A5];
+					39 01 00 00 00 00 03 F0 A5 A5
+                                        ];
 				qcom,mdss-dsi-lp1-command-state = "dsi_hs_mode";
 				qcom,mdss-dsi-nolp-command-state = "dsi_hs_mode";
 				qcom,mdss-dsi-post-on-backlight-state = "dsi_hs_mode";
@@ -300,11 +338,6 @@
 				qcom,mdss-dsi-normal-hbm-on-command-state = "dsi_hs_mode";
 				qcom,mdss-dsi-aod-high-mode-command-state = "dsi_hs_mode";
 				qcom,mdss-dsi-aod-low-mode-command-state = "dsi_hs_mode";
-				qcom,mdss-dsi-seed-off-command-state = "dsi_hs_mode";
-				qcom,mdss-dsi-seed-0-command-state = "dsi_hs_mode";
-				qcom,mdss-dsi-seed-1-command-state = "dsi_hs_mode";
-				qcom,mdss-dsi-normal-652nit-hbm-on-command-state = "dsi_hs_mode";
-				qcom,mdss-dsi-normal-573nit-hbm-on-command-state = "dsi_hs_mode";
 			};
 		};
 	};

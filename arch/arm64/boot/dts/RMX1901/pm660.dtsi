@@ -243,10 +243,10 @@
 				qcom,fast-avg-setup = <0>;
 				qcom,cal-val = <0>;
 			};
-			//#ifdef VENDOR_EDIT /* tongfeng.Huang@BSP.CHG.Basic, 2018/05/08,  Add for charging ID*/
-			chan@12 {
-				label = "gpio2_adc";
-				reg = <0x12>; //channel for GPIO2
+			//#ifdef VENDOR_EDIT /* Jianchao.Shi@BSP.CHG.Basic, 2017/01/23, sjc Add for charging */
+			chan@19 {
+				label = "gpio12_adc";
+				reg = <0x19>; //channel for GPIO7
 				qcom,decimation = <2>;
 				qcom,pre-div-channel-scaling = <0>; //1:1 scaling
 				qcom,calibration-type = "absolute";
@@ -256,7 +256,7 @@
                 qcom,cal-val = <0>;
 			};
 			//#endif
-			//#ifdef VENDOR_EDIT /* tongfeng.Huang@BSP.CHG.Basic, 2018/05/08,  Add for charging USB BTB TEMP*/
+			//#ifdef VENDOR_EDIT /* Wanghao@BSP.CHG.Basic, 2017/01/23, sjc Add for sub board choose */
 			chan@13 {
 				label = "gpio3_adc";
 				reg = <0x13>; //channel for GPIO3
@@ -268,10 +268,11 @@
 				qcom,fast-avg-setup = <0>;
                 qcom,cal-val = <0>;
 			};
-
-			chan@19 {
-				label = "gpio12_adc";
-				reg = <0x19>; //channel for GPIO_12
+			//#endif
+			//#ifdef VENDOR_EDIT /* tongfeng.Huang@BSP.CHG.Basic, 2018/05/08,  Add for charging USB BTB TEMP*/
+			chan@14 {
+				label = "gpio4_adc";
+				reg = <0x14>; //channel for GPIO4
 				qcom,decimation = <2>;
 				qcom,pre-div-channel-scaling = <0>; //1:1 scaling
 				qcom,calibration-type = "absolute";
@@ -305,8 +306,8 @@
 					  "msg-tx-discarded",
 					  "msg-rx-discarded";
 
-			qcom,default-sink-caps = <5000 3000>; /* 5V @ 3A */
-						 //<9000 3000>; /* 9V @ 3A */
+			qcom,default-sink-caps = <5000 3000>, /* 5V @ 3A */
+						 <9000 3000>; /* 9V @ 3A */
 		};
 
 		pm660_adc_tm: vadc@3400 {
