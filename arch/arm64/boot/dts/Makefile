@@ -15,6 +15,7 @@
 dts-dirs += qcom
 dts-dirs += RMX1901
 dts-dirs += RMX1971
+dts-dirs += RMX1851
 #dts-dirs += renesas
 #dts-dirs += rockchip
 #dts-dirs += socionext
