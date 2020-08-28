@@ -24,17 +24,6 @@
 #include <soc/oppo/oppo_project.h>
 #endif /* VENDOR_EDIT */
 
-#ifdef VENDOR_EDIT
-/*Jianfeng.Qiu@PSW.MM.AudioDriver.FTM.1226731, 2018/05/12, Add for FTM*/
-extern int ftm_mode;
-extern char ftm_SpeakerCalibration[17];
-extern char ftm_spk_resistance[24];
-
-#ifndef BOOT_MODE_FACTORY
-#define BOOT_MODE_FACTORY 3
-#endif
-#endif /* VENDOR_EDIT */
-
 /* handle macro for bitfield */
 #define TFA_MK_BF(reg, pos, len) ((reg<<8)|(pos<<4)|(len-1))
 
@@ -2801,12 +2790,6 @@ enum Tfa98xx_Error tfaRunSpeakerCalibration_result_v6(struct tfa_device *tfa, in
 		if ((get_project() != 18085) && (get_project() != 18081)) {
 			if ((tfa->mohm[0] < 4800) || (tfa->mohm[0] > 7500)) {
 				pr_info("speaker_resistance_fail (4.8ohm - 7.5ohm)\n");
-				/*Jianfeng.Qiu@PSW.MM.AudioDriver.FTM.1226731, 2018/05/12, Add for FTM*/
-				if (ftm_mode == BOOT_MODE_FACTORY) {
-					strcpy(ftm_spk_resistance, "speaker_resistance_fail");
-				}
-				/*Jianfeng.Qiu@PSW.MM.AudioDriver.FTM.1226731, 2018/05/12, Add for FTM end*/
-				g_speaker_resistance_fail = true;
 
 				/* When MTPOTC is set (cal=once) re-lock key2 */
 				if (TFA_GET_BF(tfa, MTPOTC) == 1) {
@@ -2820,13 +2803,6 @@ enum Tfa98xx_Error tfaRunSpeakerCalibration_result_v6(struct tfa_device *tfa, in
 		} else {
 			//6ohm - 10.5ohm
 			if ((tfa->mohm[0] < 6000) || (tfa->mohm[0] > 10500)) {
-				pr_info("speaker_resistance_fail (6ohm - 10.5ohm)\n");
-				/*Jianfeng.Qiu@PSW.MM.AudioDriver.FTM.1226731, 2018/05/12, Add for FTM*/
-				if (ftm_mode == BOOT_MODE_FACTORY) {
-					strcpy(ftm_spk_resistance, "speaker_resistance_fail");
-				}
-				/*Jianfeng.Qiu@PSW.MM.AudioDriver.FTM.1226731, 2018/05/12, Add for FTM end*/
-				g_speaker_resistance_fail = true;
 
 				/* When MTPOTC is set (cal=once) re-lock key2 */
 				if (TFA_GET_BF(tfa, MTPOTC) == 1) {
@@ -3134,12 +3110,6 @@ enum Tfa98xx_Error tfaRunWaitCalibration_v6(struct tfa_device *tfa, int *calibra
 	}
 
 	if (*calibrateDone != 1) {
-		#ifdef VENDOR_EDIT
-		/*Jianfeng.Qiu@PSW.MM.AudioDriver.FTM.1226731, 2018/05/12, Add for FTM*/
-		if (ftm_mode == BOOT_MODE_FACTORY) {
-			strcpy(ftm_SpeakerCalibration, "calibration_fail");
-		}
-		#endif /* VENDOR_EDIT */
 		pr_err("Calibration failed! \n");
 		err = Tfa98xx_Error_Bad_Parameter;
 	} else if (tries==TFA98XX_API_WAITRESULT_NTRIES) {

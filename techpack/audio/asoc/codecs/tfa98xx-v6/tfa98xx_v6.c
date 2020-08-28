@@ -61,12 +61,6 @@ extern bool g_speaker_resistance_fail;
 #define I2C_RETRIES 50
 #define I2C_RETRY_DELAY 5 /* ms */
 
-#ifdef VENDOR_EDIT
-/*Jianfeng.Qiu@PSW.MM.AudioDriver.FTM.1226731, 2018/05/12, Add for FTM*/
-#include <linux/debugfs.h>
-#include <linux/fs.h>
-#endif /* VENDOR_EDIT */
-
 /* Change volume selection behavior:
  * Uncomment following line to generate a profile change when updating
  * a volume control (also changes to the profile of the modified  volume
@@ -219,42 +213,6 @@ static const struct tfa98xx_rate rate_to_fssel[] = {
 	{ 48000, 8 },
 };
 
-#ifdef VENDOR_EDIT
-/* xiang.fei@MM.AudioDriver.Codec, 2018/03/12, add for ftm */
-unsigned short tfa98xx_vol_value = 0;
-static int tfa98xx_volume_get(struct snd_kcontrol *kcontrol, struct snd_ctl_elem_value *ucontrol)
-{
-	return 0;
-}
-
-static int tfa98xx_volume_set(struct snd_kcontrol *kcontrol, struct snd_ctl_elem_value *ucontrol)
-{
-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
-	struct tfa98xx *tfa98xx = snd_soc_codec_get_drvdata(codec);
-	int err = 0;
-
-	tfa98xx_vol_value = ucontrol->value.integer.value[0];
-
-	printk("%s: volume: %d\n", __func__, tfa98xx_vol_value);
-
-	mutex_lock(&tfa98xx->dsp_lock);
-	err = tfa98xx_set_volume_level_v6(tfa98xx->tfa, tfa98xx_vol_value);
-	if (err) {
-		printk("%s: set volume error, code:%d\n", __func__, err);
-	} else {
-		printk("%s: set volume ok\n", __func__);
-	}
-	mutex_unlock(&tfa98xx->dsp_lock);
-
-	return 0;
-}
-
-static const struct snd_kcontrol_new tfa98xx_snd_controls[] = {
-	SOC_SINGLE_EXT("TFA98XX Volume", SND_SOC_NOPM, 0, 0xff, 0,
-		       tfa98xx_volume_get, tfa98xx_volume_set),
-};
-#endif /* VENDOR_EDIT */
-
 
 static inline char *tfa_cont_profile_name(struct tfa98xx *tfa98xx, int prof_idx)
 {
@@ -281,74 +239,12 @@ static enum tfa_error tfa98xx_write_re25(struct tfa_device *tfa, int value)
 	return err;
 }
 
-#ifdef VENDOR_EDIT
-/*Jianfeng.Qiu@PSW.MM.AudioDriver.FTM.1226731, 2018/05/12, Add for FTM*/
-static  struct dentry *tfa98xx_debugfs;
-#define TFA98XX_DEBUG_FS_NAME "ftm_tfa98xx"
-int ftm_mode = 0;
-static char ftm_load_file[15] = "load_file_ok";
-static char ftm_clk[9] = "clk_ok";
-char ftm_SpeakerCalibration[17] = "calibration_ok";
-static char ftm_path[15] = "open_path_ok";
-char ftm_spk_resistance[24] = "speaker_resistance_ok";
-static char ftm_tfa98xx_flag[5] = "fail";
-
-#ifndef BOOT_MODE_FACTORY
-#define BOOT_MODE_FACTORY 3
-#endif
-
-extern int get_boot_mode(void);
-
-static int kernel_debug_open(struct inode *inode, struct file *file)
-{
-	pr_info("%s \n", __FUNCTION__);
-	return 0;
-}
-
-static ssize_t kernel_debug_read(struct file *file, char __user *buf,
-                                 size_t count, loff_t *pos)
-{
-/* /sys/kernel/debug/ftm_tfa98xx */
-	const int size = 1024;
-	char buffer[size];
-	int n = 0;
-
-	n += scnprintf(buffer + n, size - n, "%s ", ftm_load_file);
-	n += scnprintf(buffer + n, size - n, "%s ", ftm_clk);
-	n += scnprintf(buffer + n, size - n, "%s ", ftm_SpeakerCalibration);
-	n += scnprintf(buffer + n, size - n, "%s ", ftm_path);
-	n += scnprintf(buffer + n, size - n, "%s ", ftm_spk_resistance);
-	n += scnprintf(buffer + n, size - n, "%s ", ftm_tfa98xx_flag);
-	n += scnprintf(buffer + n, size - n, "%d ", ftm_mode);
-
-	return simple_read_from_buffer(buf, count, pos, buffer, n);
-}
-
-static ssize_t kernel_debug_write(struct file *f, const char __user *buf,
-                                  size_t count, loff_t *offset)
-{
-	pr_info("%s \n", __FUNCTION__);
-	return 0;
-}
-
-static const struct file_operations tfa98xx_debug_ops =
-{
-	.open = kernel_debug_open,
-	.read = kernel_debug_read,
-	.write = kernel_debug_write,
-};
-#endif /* VENDOR_EDIT */
-
 /* Wrapper for tfa start */
 static enum tfa_error tfa98xx_tfa_start(struct tfa98xx *tfa98xx, int next_profile, int vstep)
 {
 	enum tfa_error err;
 	ktime_t start_time, stop_time;
 	u64 delta_time;
-	#ifdef VENDOR_EDIT
-	/*Jianfeng.Qiu@PSW.MM.AudioDriver.FTM.1226731, 2018/05/12, Add for FTM*/
-	int ready = 0;
-	#endif /* VENDOR_EDIT */
 
 	if (trace_level & 8) {
 		start_time = ktime_get_boottime();
@@ -388,17 +284,6 @@ static enum tfa_error tfa98xx_tfa_start(struct tfa98xx *tfa98xx, int next_profil
 	 * Restore it if required
 	 */
 	tfa98xx_interrupt_enable(tfa98xx, true);
-
-	#ifdef VENDOR_EDIT
-	/*Jianfeng.Qiu@PSW.MM.AudioDriver.FTM.1226731, 2018/05/12, Add for FTM*/
-	/*10h bit13/bit6(AREFS/CLKS)*/
-	if (ftm_mode == BOOT_MODE_FACTORY) {
-		tfa98xx_dsp_system_stable_v6(tfa98xx->tfa, &ready);
-		if (!ready) {
-			strcpy(ftm_clk, "clk_fail");
-		}
-	}
-	#endif /* VENDOR_EDIT */
 
 	return err;
 }
@@ -2310,10 +2195,6 @@ static void tfa98xx_container_loaded(const struct firmware *cont, void *context)
 
 		tfa_err = tfa_load_cnt_v6(container, container_size);
 		if (tfa_err != tfa_error_ok) {
-			#ifdef VENDOR_EDIT
-			/*Jianfeng.Qiu@PSW.MM.AudioDriver.FTM.1226731, 2018/05/12, Add for FTM*/
-			strcpy(ftm_load_file, "load_file_fail");
-			#endif /* VENDOR_EDIT */
 			mutex_unlock(&tfa98xx_mutex);
 			kfree(container);
 			dev_err(tfa98xx->dev, "Cannot load container file, aborting\n");
@@ -2608,12 +2489,6 @@ static void tfa98xx_dsp_init(struct tfa98xx *tfa98xx)
 		/* cancel other pending init works */
 		cancel_delayed_work(&tfa98xx->init_work);
 		tfa98xx->init_count = 0;
-		#ifdef VENDOR_EDIT
-		/*Jianfeng.Qiu@PSW.MM.AudioDriver.FTM.1226731, 2018/05/12, Add for FTM*/
-		if (ftm_mode == BOOT_MODE_FACTORY) {
-			strcpy(ftm_path, "open_path_fail");
-		}
-		#endif /* VENDOR_EDIT */
 	}
 	mutex_unlock(&tfa98xx->dsp_lock);
 
@@ -2659,14 +2534,6 @@ static void tfa98xx_dsp_init(struct tfa98xx *tfa98xx)
 			}
 
 		}
-
-		#ifdef VENDOR_EDIT
-		/*Jianfeng.Qiu@PSW.MM.AudioDriver.FTM.1226731, 2018/05/12, Add for FTM*/
-		if (ftm_mode == BOOT_MODE_FACTORY) {
-			pr_info("finish for ftm ringtone\n");
-			strcpy(ftm_tfa98xx_flag, "ok");
-		}
-		#endif /* VENDOR_EDIT */
 	}
 
 
@@ -3107,12 +2974,6 @@ static int tfa98xx_probe(struct snd_soc_codec *codec)
 	}
 #endif
 	tfa98xx_add_widgets(tfa98xx);
-
-	#ifdef VENDOR_EDIT
-	/* xiang.fei@MM.AudioDriver.Codec, 2018/03/12, add for ftm */
-	snd_soc_add_codec_controls(tfa98xx->codec,
-		tfa98xx_snd_controls, ARRAY_SIZE(tfa98xx_snd_controls));
-	#endif /* VENDOR_EDIT */
 
 	#ifdef VENDOR_EDIT
 	/*Jianfeng.Qiu@PSW.MM.AudioDriver.FTM.954616, 2017/01/03, Add for get spk revsion*/
@@ -3607,13 +3468,6 @@ static int tfa98xx_i2c_probe(struct i2c_client *i2c,
 	if (no_start == 0)
 		tfa98xx_debug_init(tfa98xx, i2c);
 #endif
-	#ifdef VENDOR_EDIT
-	/*Jianfeng.Qiu@PSW.MM.AudioDriver.FTM.1226731, 2018/05/12, Add for FTM*/
-	tfa98xx_debugfs = debugfs_create_file(TFA98XX_DEBUG_FS_NAME,
-			S_IFREG | S_IRUGO | S_IWUSR, NULL, (void *)TFA98XX_DEBUG_FS_NAME, &tfa98xx_debug_ops);
-	ftm_mode = get_boot_mode();
-	pr_info("ftm_mode=%d\n", ftm_mode);
-	#endif /* VENDOR_EDIT */
 
 	/* Register the sysfs files for climax backdoor access */
 	ret = device_create_bin_file(&i2c->dev, &dev_attr_rw);
