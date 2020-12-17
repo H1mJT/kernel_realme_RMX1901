@@ -529,7 +529,7 @@ static void hif_cpuhp_unregister(struct hif_softc *scn)
 }
 #endif /* ifdef HIF_CPU_PERF_AFFINE_MASK */
 
-#ifdef HIF_CE_LOG_INFO
+#if defined(HIF_CE_LOG_INFO) || defined(HIF_BUS_LOG_INFO)
 /**
  * hif_recovery_notifier_cb - Recovery notifier callback to log
  *  hang event data
@@ -556,6 +556,8 @@ int hif_recovery_notifier_cb(struct notifier_block *block, unsigned long state,
 	if (!hif_handle)
 		return -EINVAL;
 
+	hif_log_bus_info(hif_handle, notif_data->hang_data,
+			 &notif_data->offset);
 	hif_log_ce_info(hif_handle, notif_data->hang_data,
 			&notif_data->offset);
 
@@ -1517,7 +1519,7 @@ void *hif_mem_alloc_consistent_unaligned(struct hif_softc *scn,
 end:
 	dp_info("%s va_unaligned %pK pa_unaligned %pK size %d ring_type %d",
 		*is_mem_prealloc ? "pre-alloc" : "dynamic-alloc", vaddr,
-		(void *)*paddr, size, ring_type);
+		(void *)*paddr, (int)size, ring_type);
 
 	return vaddr;
 }
