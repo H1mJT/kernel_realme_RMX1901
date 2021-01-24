@@ -81,6 +81,7 @@ bool task_is_zygote(struct task_struct *p)
 {
 	return p->signal == zygote32_sig || p->signal == zygote64_sig;
 }
+#define HWCOMPOSER_BIN_PREFIX "/vendor/bin/hw/android.hardware.graphics.composer"
 
 void __register_binfmt(struct linux_binfmt * fmt, int insert)
 {
@@ -1797,7 +1798,12 @@ static int do_execveat_common(int fd, struct filename *filename,
 		goto out;
 
 	if (is_global_init(current->parent)) {
-    if (unlikely(!strcmp(filename->name, ZYGOTE32_BIN))) {
+		if (unlikely(!strncmp(filename->name,
+					   HWCOMPOSER_BIN_PREFIX,
+					   strlen(HWCOMPOSER_BIN_PREFIX)))) {
+			current->flags |= PF_PERF_CRITICAL;
+			set_cpus_allowed_ptr(current, cpu_perf_mask);
+		} else if (unlikely(!strcmp(filename->name, ZYGOTE32_BIN))) {
 			zygote32_sig = current->signal;
 		} else if (unlikely(!strcmp(filename->name, ZYGOTE64_BIN))) {
 			zygote64_sig = current->signal;
