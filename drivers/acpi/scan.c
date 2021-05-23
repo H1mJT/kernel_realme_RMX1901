@@ -669,6 +669,11 @@ int acpi_device_add(struct acpi_device *device,
 			found = 1;
 			kfree(new_bus_id);
 			break;
+		result = acpi_device_set_name(device, acpi_device_bus_id);
+		if (result) {
+			kfree_const(acpi_device_bus_id->bus_id);
+			kfree(acpi_device_bus_id);
+			goto err_unlock;
 		}
 	}
 	if (!found) {
@@ -2166,3 +2171,4 @@ int acpi_reconfig_notifier_unregister(struct notifier_block *nb)
 	return blocking_notifier_chain_unregister(&acpi_reconfig_chain, nb);
 }
 EXPORT_SYMBOL(acpi_reconfig_notifier_unregister);
+
