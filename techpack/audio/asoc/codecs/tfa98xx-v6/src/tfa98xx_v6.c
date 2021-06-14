@@ -2411,7 +2411,7 @@ static int tfa98xx_load_container(struct tfa98xx *tfa98xx)
 	tfa98xx->dsp_fw_state = TFA98XX_DSP_FW_PENDING;
 
 #ifdef CONFIG_PRODUCT_REALME_SDM710
-	sprintf(fw_name, "tfa98xx_%d.cnt", get_project());
+	sprintf(fw_name, "tfa98xx.cnt");
 	pr_info("loaded cnt: %s\n", fw_name);
 #endif /* CONFIG_PRODUCT_REALME_SDM710 */
 
