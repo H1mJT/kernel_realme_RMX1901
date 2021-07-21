@@ -112,6 +112,9 @@
 #define v2printk(a...) do {		\
 	if (verbose > 1)		\
 		printk(KERN_INFO a);	\
+	if (verbose > 1) {		\
+		printk(KERN_INFO a);	\
+	}				\
 	touch_nmi_watchdog();		\
 } while (0)
 #define eprintk(a...) do {		\
