@@ -315,8 +315,7 @@ static void send_hsr_supervision_frame(struct hsr_port *master,
 	hsr_sp = (typeof(hsr_sp)) skb_put(skb, sizeof(struct hsr_sup_payload));
 	ether_addr_copy(hsr_sp->MacAddressA, master->dev->dev_addr);
 
-	if (skb_put_padto(skb, ETH_ZLEN + HSR_HLEN))
-		return;
+	skb_put_padto(skb, ETH_ZLEN + HSR_HLEN);
 
 	hsr_forward_skb(skb, master);
 	return;

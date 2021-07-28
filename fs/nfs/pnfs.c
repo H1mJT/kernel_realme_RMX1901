@@ -1070,11 +1070,6 @@ _pnfs_return_layout(struct inode *ino)
 {
 	struct pnfs_layout_hdr *lo = NULL;
 	struct nfs_inode *nfsi = NFS_I(ino);
-	struct pnfs_layout_range range = {
-		.iomode		= IOMODE_ANY,
-		.offset		= 0,
-		.length		= NFS4_MAX_UINT64,
-	};
 	LIST_HEAD(tmp_list);
 	nfs4_stateid stateid;
 	int status = 0, empty;
@@ -1101,10 +1096,8 @@ _pnfs_return_layout(struct inode *ino)
 			.offset		= 0,
 			.length		= NFS4_MAX_UINT64,
 		};
-	pnfs_mark_matching_lsegs_return(lo, &tmp_list, &range, 0);
-
-	if (NFS_SERVER(ino)->pnfs_curr_ld->return_range)
 		NFS_SERVER(ino)->pnfs_curr_ld->return_range(lo, &range);
+	}
 
 	/* Don't send a LAYOUTRETURN if list was initially empty */
 	if (empty) {

@@ -2741,8 +2741,6 @@ int test_clear_page_writeback(struct page *page)
 	 */
 	if (ret) {
 		mem_cgroup_dec_stat(memcg, MEM_CGROUP_STAT_WRITEBACK);
-		__mem_cgroup_update_page_stat(page, memcg,
-					      MEM_CGROUP_STAT_WRITEBACK, -1);
 		dec_node_page_state(page, NR_WRITEBACK);
 		dec_zone_page_state(page, NR_ZONE_WRITE_PENDING);
 		inc_node_page_state(page, NR_WRITTEN);

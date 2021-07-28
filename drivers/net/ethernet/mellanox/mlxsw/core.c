@@ -436,7 +436,7 @@ static void mlxsw_emad_trans_timeout_schedule(struct mlxsw_reg_trans *trans)
 {
 	unsigned long timeout = msecs_to_jiffies(MLXSW_EMAD_TIMEOUT_MS);
 
-	mlxsw_core_schedule_dw(&trans->timeout_dw, timeout << trans->retries);
+	mlxsw_core_schedule_dw(&trans->timeout_dw, timeout);
 }
 
 static int mlxsw_emad_transmit(struct mlxsw_core *mlxsw_core,
@@ -484,9 +484,6 @@ static void mlxsw_emad_transmit_retry(struct mlxsw_core *mlxsw_core,
 		trans->retries++;
 		err = mlxsw_emad_transmit(trans->core, trans);
 		if (err == 0)
-			return;
-
-		if (!atomic_dec_and_test(&trans->active))
 			return;
 	} else {
 		err = -EIO;
@@ -1373,7 +1370,7 @@ static int mlxsw_core_reg_access_emad(struct mlxsw_core *mlxsw_core,
 	err = mlxsw_emad_reg_access(mlxsw_core, reg, payload, type, trans,
 				    bulk_list, cb, cb_priv, tid);
 	if (err) {
-		kfree_rcu(trans, rcu);
+		kfree(trans);
 		return err;
 	}
 	return 0;
@@ -1587,10 +1584,9 @@ void mlxsw_core_skb_receive(struct mlxsw_core *mlxsw_core, struct sk_buff *skb,
 			break;
 		}
 	}
-	if (!found) {
-		rcu_read_unlock();
+	rcu_read_unlock();
+	if (!found)
 		goto drop;
-	}
 
 	pcpu_stats = this_cpu_ptr(mlxsw_core->pcpu_stats);
 	u64_stats_update_begin(&pcpu_stats->syncp);
@@ -1601,7 +1597,6 @@ void mlxsw_core_skb_receive(struct mlxsw_core *mlxsw_core, struct sk_buff *skb,
 	u64_stats_update_end(&pcpu_stats->syncp);
 
 	rxl->func(skb, local_port, rxl_item->priv);
-	rcu_read_unlock();
 	return;
 
 drop:

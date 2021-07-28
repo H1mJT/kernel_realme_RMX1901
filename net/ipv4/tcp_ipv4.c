@@ -944,18 +944,9 @@ int tcp_md5_do_add(struct sock *sk, const union tcp_md5_addr *addr,
 
 	key = tcp_md5_do_lookup(sk, addr, family);
 	if (key) {
-		/* Pre-existing entry - just update that one.
-		 * Note that the key might be used concurrently.
-		 */
+		/* Pre-existing entry - just update that one. */
 		memcpy(key->key, newkey, newkeylen);
-
-		/* Pairs with READ_ONCE() in tcp_md5_hash_key().
-		 * Also note that a reader could catch new key->keylen value
-		 * but old key->key[], this is the reason we use __GFP_ZERO
-		 * at sock_kmalloc() time below these lines.
-		 */
-		WRITE_ONCE(key->keylen, newkeylen);
-
+		key->keylen = newkeylen;
 		return 0;
 	}
 
@@ -971,7 +962,7 @@ int tcp_md5_do_add(struct sock *sk, const union tcp_md5_addr *addr,
 		rcu_assign_pointer(tp->md5sig_info, md5sig);
 	}
 
-	key = sock_kmalloc(sk, sizeof(*key), gfp | __GFP_ZERO);
+	key = sock_kmalloc(sk, sizeof(*key), gfp);
 	if (!key)
 		return -ENOMEM;
 	if (!tcp_alloc_md5sig_pool()) {
@@ -2497,7 +2488,6 @@ static int __net_init tcp_sk_init(struct net *net)
 	net->ipv4.sysctl_tcp_orphan_retries = 0;
 	net->ipv4.sysctl_tcp_fin_timeout = TCP_FIN_TIMEOUT;
 	net->ipv4.sysctl_tcp_notsent_lowat = UINT_MAX;
-	net->ipv4.sysctl_tcp_default_init_rwnd = TCP_INIT_CWND * 2;
 
 	return 0;
 fail:

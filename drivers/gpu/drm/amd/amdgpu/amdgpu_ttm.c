@@ -637,7 +637,6 @@ static int amdgpu_ttm_tt_pin_userptr(struct ttm_tt *ttm)
 
 release_sg:
 	kfree(ttm->sg);
-	ttm->sg = NULL;
 	return r;
 }
 
@@ -886,7 +885,6 @@ static void amdgpu_ttm_tt_unpopulate(struct ttm_tt *ttm)
 
 	if (gtt && gtt->userptr) {
 		kfree(ttm->sg);
-		ttm->sg = NULL;
 		ttm->page_flags &= ~TTM_PAGE_FLAG_SG;
 		return;
 	}

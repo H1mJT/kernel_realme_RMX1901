@@ -15647,10 +15647,6 @@ lpfc_prep_seq(struct lpfc_vport *vport, struct hbq_dmabuf *seq_dmabuf)
 			list_add_tail(&iocbq->list, &first_iocbq->list);
 		}
 	}
-	/* Free the sequence's header buffer */
-	if (!first_iocbq)
-		lpfc_in_buf_free(vport->phba, &seq_dmabuf->dbuf);
-
 	return first_iocbq;
 }
 

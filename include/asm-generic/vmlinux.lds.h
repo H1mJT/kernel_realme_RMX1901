@@ -252,8 +252,7 @@
 
 #define PAGE_ALIGNED_DATA(page_align)					\
 	. = ALIGN(page_align);						\
-	*(.data..page_aligned)						\
-	. = ALIGN(page_align);
+	*(.data..page_aligned)
 
 #define READ_MOSTLY_DATA(align)						\
 	. = ALIGN(align);						\
@@ -462,10 +461,7 @@
  */
 #define TEXT_TEXT							\
 		ALIGN_FUNCTION();					\
-		*(.text.hot .text.hot.*)				\
-		*(TEXT_MAIN .text.fixup)				\
-		*(.text.unlikely .text.unlikely.*)			\
-		*(.text.unknown .text.unknown.*)			\
+		*(.text.hot TEXT_MAIN .text.fixup .text.unlikely)	\
 		*(.text..ftrace)					\
 		*(TEXT_CFI_MAIN) 					\
 		*(.ref.text)						\
@@ -625,9 +621,7 @@
 	. = ALIGN(bss_align);						\
 	.bss : AT(ADDR(.bss) - LOAD_OFFSET) {				\
 		BSS_FIRST_SECTIONS					\
-		. = ALIGN(PAGE_SIZE);					\
 		*(.bss..page_aligned)					\
-		. = ALIGN(PAGE_SIZE);					\
 		*(.dynbss)						\
 		*(BSS_MAIN)						\
 		*(COMMON)						\

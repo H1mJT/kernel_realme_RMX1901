@@ -526,8 +526,6 @@ static struct sh_eth_cpu_data r7s72100_data = {
 			  EESR_TDE | EESR_ECI,
 	.fdr_value	= 0x0000070f,
 
-	.trscer_err_mask = DESC_I_RINT8 | DESC_I_RINT5,
-
 	.no_psr		= 1,
 	.apr		= 1,
 	.mpr		= 1,
@@ -2117,7 +2115,7 @@ static void sh_eth_get_strings(struct net_device *ndev, u32 stringset, u8 *data)
 {
 	switch (stringset) {
 	case ETH_SS_STATS:
-		memcpy(data, sh_eth_gstrings_stats,
+		memcpy(data, *sh_eth_gstrings_stats,
 		       sizeof(sh_eth_gstrings_stats));
 		break;
 	}
@@ -2413,9 +2411,9 @@ static int sh_eth_close(struct net_device *ndev)
 	/* Free all the skbuffs in the Rx queue and the DMA buffer. */
 	sh_eth_ring_free(ndev);
 
-	mdp->is_opened = 0;
+	pm_runtime_put_sync(&mdp->pdev->dev);
 
-	pm_runtime_put(&mdp->pdev->dev);
+	mdp->is_opened = 0;
 
 	return 0;
 }

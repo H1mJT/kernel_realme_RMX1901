@@ -774,7 +774,7 @@ static int skcipher_check_key(struct socket *sock)
 	struct alg_sock *ask = alg_sk(sk);
 
 	lock_sock(sk);
-	if (!atomic_read(&ask->nokey_refcnt))
+	if (ask->refcnt)
 		goto unlock_child;
 
 	psk = ask->parent;
@@ -786,8 +786,11 @@ static int skcipher_check_key(struct socket *sock)
 	if (!tfm->has_key)
 		goto unlock;
 
-	atomic_dec(&pask->nokey_refcnt);
-	atomic_set(&ask->nokey_refcnt, 0);
+	if (!pask->refcnt++)
+		sock_hold(psk);
+
+	ask->refcnt = 1;
+	sock_put(psk);
 
 	err = 0;
 

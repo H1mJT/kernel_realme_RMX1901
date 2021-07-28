@@ -1773,7 +1773,6 @@ const struct file_operations ceph_file_fops = {
 	.mmap = ceph_mmap,
 	.fsync = ceph_fsync,
 	.lock = ceph_lock,
-	.setlease = simple_nosetlease,
 	.flock = ceph_flock,
 	.splice_write = iter_file_splice_write,
 	.unlocked_ioctl = ceph_ioctl,

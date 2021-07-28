@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/perl
 
 open (IN,"ktest.pl");
 while (<IN>) {

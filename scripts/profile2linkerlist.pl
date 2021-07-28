@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/perl
 
 #
 # Takes a (sorted) output of readprofile and turns it into a list suitable for

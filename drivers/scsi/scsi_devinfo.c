@@ -451,8 +451,7 @@ static struct scsi_dev_info_list *scsi_dev_info_list_find(const char *vendor,
 			/*
 			 * vendor strings must be an exact match
 			 */
-			if (vmax != strnlen(devinfo->vendor,
-					    sizeof(devinfo->vendor)) ||
+			if (vmax != strlen(devinfo->vendor) ||
 			    memcmp(devinfo->vendor, vskip, vmax))
 				continue;
 
@@ -460,7 +459,7 @@ static struct scsi_dev_info_list *scsi_dev_info_list_find(const char *vendor,
 			 * @model specifies the full string, and
 			 * must be larger or equal to devinfo->model
 			 */
-			mlen = strnlen(devinfo->model, sizeof(devinfo->model));
+			mlen = strlen(devinfo->model);
 			if (mmax < mlen || memcmp(devinfo->model, mskip, mlen))
 				continue;
 			return devinfo;

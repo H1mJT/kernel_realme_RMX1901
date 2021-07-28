@@ -121,10 +121,8 @@ static void alg_do_release(const struct af_alg_type *type, void *private)
 
 int af_alg_release(struct socket *sock)
 {
-	if (sock->sk) {
+	if (sock->sk)
 		sock_put(sock->sk);
-		sock->sk = NULL;
-	}
 	return 0;
 }
 EXPORT_SYMBOL_GPL(af_alg_release);
@@ -132,15 +130,21 @@ EXPORT_SYMBOL_GPL(af_alg_release);
 void af_alg_release_parent(struct sock *sk)
 {
 	struct alg_sock *ask = alg_sk(sk);
-	unsigned int nokey = atomic_read(&ask->nokey_refcnt);
+	unsigned int nokey = ask->nokey_refcnt;
+	bool last = nokey && !ask->refcnt;
 
 	sk = ask->parent;
 	ask = alg_sk(sk);
 
-	if (nokey)
-		atomic_dec(&ask->nokey_refcnt);
+	local_bh_disable();
+	bh_lock_sock(sk);
+	ask->nokey_refcnt -= nokey;
+	if (!last)
+		last = !--ask->refcnt;
+	bh_unlock_sock(sk);
+	local_bh_enable();
 
-	if (atomic_dec_and_test(&ask->refcnt))
+	if (last)
 		sock_put(sk);
 }
 EXPORT_SYMBOL_GPL(af_alg_release_parent);
@@ -185,7 +189,7 @@ static int alg_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
 
 	err = -EBUSY;
 	lock_sock(sk);
-	if (atomic_read(&ask->refcnt))
+	if (ask->refcnt | ask->nokey_refcnt)
 		goto unlock;
 
 	swap(ask->type, type);
@@ -234,7 +238,7 @@ static int alg_setsockopt(struct socket *sock, int level, int optname,
 	int err = -EBUSY;
 
 	lock_sock(sk);
-	if (atomic_read(&ask->refcnt) != atomic_read(&ask->nokey_refcnt))
+	if (ask->refcnt)
 		goto unlock;
 
 	type = ask->type;
@@ -301,14 +305,12 @@ int af_alg_accept(struct sock *sk, struct socket *newsock)
 
 	sk2->sk_family = PF_ALG;
 
-	if (atomic_inc_return_relaxed(&ask->refcnt) == 1)
+	if (nokey || !ask->refcnt++)
 		sock_hold(sk);
-	if (nokey) {
-		atomic_inc(&ask->nokey_refcnt);
-		atomic_set(&alg_sk(sk2)->nokey_refcnt, 1);
-	}
+	ask->nokey_refcnt += nokey;
 	alg_sk(sk2)->parent = sk;
 	alg_sk(sk2)->type = type;
+	alg_sk(sk2)->nokey_refcnt = nokey;
 
 	newsock->ops = type->ops;
 	newsock->state = SS_CONNECTED;

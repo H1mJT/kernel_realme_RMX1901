@@ -455,7 +455,7 @@ static int aead_recvmsg_async(struct socket *sock, struct msghdr *msg,
 	memcpy(areq->iv, ctx->iv, crypto_aead_ivsize(tfm));
 	aead_request_set_tfm(req, tfm);
 	aead_request_set_ad(req, ctx->aead_assoclen);
-	aead_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP,
+	aead_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG,
 				  aead_async_cb, req);
 	used -= ctx->aead_assoclen;
 
@@ -747,7 +747,7 @@ static int aead_check_key(struct socket *sock)
 	struct alg_sock *ask = alg_sk(sk);
 
 	lock_sock(sk);
-	if (!atomic_read(&ask->nokey_refcnt))
+	if (ask->refcnt)
 		goto unlock_child;
 
 	psk = ask->parent;
@@ -759,8 +759,11 @@ static int aead_check_key(struct socket *sock)
 	if (!tfm->has_key)
 		goto unlock;
 
-	atomic_dec(&pask->nokey_refcnt);
-	atomic_set(&ask->nokey_refcnt, 0);
+	if (!pask->refcnt++)
+		sock_hold(psk);
+
+	ask->refcnt = 1;
+	sock_put(psk);
 
 	err = 0;
 
@@ -925,7 +928,7 @@ static int aead_accept_parent_nokey(void *private, struct sock *sk)
 	ask->private = ctx;
 
 	aead_request_set_tfm(&ctx->aead_req, aead);
-	aead_request_set_callback(&ctx->aead_req, CRYPTO_TFM_REQ_MAY_SLEEP,
+	aead_request_set_callback(&ctx->aead_req, CRYPTO_TFM_REQ_MAY_BACKLOG,
 				  af_alg_complete, &ctx->completion);
 
 	sk->sk_destruct = aead_sock_destruct;
