@@ -889,6 +889,8 @@ int tipc_link_xmit(struct tipc_link *l, struct sk_buff_head *list,
 	struct sk_buff *skb, *_skb, *bskb;
 	int pkt_cnt = skb_queue_len(list);
 
+	hdr = buf_msg(skb_peek(list));
+	imp = msg_importance(hdr);
 	/* Match msg importance against this and all higher backlog limits: */
 	if (!skb_queue_empty(backlogq)) {
 		for (i = imp; i <= TIPC_SYSTEM_IMPORTANCE; i++) {
@@ -896,6 +898,7 @@ int tipc_link_xmit(struct tipc_link *l, struct sk_buff_head *list,
 				return link_schedule_user(l, list);
 		}
 	}
+
 	if (unlikely(msg_size(hdr) > mtu)) {
 		skb_queue_purge(list);
 		return -EMSGSIZE;

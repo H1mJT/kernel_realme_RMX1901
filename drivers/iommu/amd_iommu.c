@@ -1331,6 +1331,10 @@ static void increase_address_space(struct protection_domain *domain,
 	unsigned long flags;
 	u64 *pte;
 
+	pte = (void *)get_zeroed_page(gfp);
+	if (!pte)
+		return;
+
 	spin_lock_irqsave(&domain->lock, flags);
 
 	if (WARN_ON_ONCE(domain->mode == PAGE_MODE_6_LEVEL))
