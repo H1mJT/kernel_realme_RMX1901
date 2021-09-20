@@ -456,7 +456,7 @@
 				compatible = "android,vbmeta";
 				// #Wanghao@BSP.Bootloader.Bootflow, 2018/04/26, add to disable A/B partition
 				//add recovery
-				parts = "vbmeta,boot,system,vendor,dtbo,recovery,odm";
+				parts = "vbmeta,boot,system,vendor,dtbo,recovery";
 				// #endif
 			};
 
@@ -475,14 +475,6 @@
 					// #Wanghao@BSP.Bootloader.Bootflow, 2018/04/26, add to disable A/B partition
 					fsmgr_flags = "wait";
 					// #endif
-				};
-				odm {
-					compatible = "android,odm";
-					dev = "/dev/block/platform/soc/1d84000.ufshc/by-name/odm";
-					type = "ext4";
-					mnt_flags = "ro,barrier=1,discard";
-					fsmgr_flags = "wait";
-					status = "ok";
 				};
 			};
 #endif
