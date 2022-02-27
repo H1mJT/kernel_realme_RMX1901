@@ -984,6 +984,12 @@ static const struct frac_entry frac_table_pixel[] = {
 	{ 4, 9 },
 	{ 3, 8 },
 	{ 2, 9 },
+<<<<<<< HEAD
+=======
+	{ 4, 9 },
+	{ 1, 1 },
+	{ 2, 3 },
+>>>>>>> ef09f17d090b... clk: qcom: clk-rcg2: Update the frac table for pixel clock
 	{ }
 };
 
