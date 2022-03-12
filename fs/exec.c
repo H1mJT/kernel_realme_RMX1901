@@ -76,10 +76,16 @@ static DEFINE_RWLOCK(binfmt_lock);
 #define ZYGOTE64_BIN "/system/bin/app_process64"
 static struct signal_struct *zygote32_sig;
 static struct signal_struct *zygote64_sig;
+static pid_t zygote32_pid;
+static pid_t zygote64_pid;
 
 bool task_is_zygote(struct task_struct *p)
 {
 	return p->signal == zygote32_sig || p->signal == zygote64_sig;
+}
+bool is_zygote_pid(pid_t pid)
+{
+	return pid == zygote32_pid || pid == zygote64_pid;
 }
 #define HWCOMPOSER_BIN_PREFIX "/vendor/bin/hw/android.hardware.graphics.composer"
 
@@ -1796,6 +1802,13 @@ static int do_execveat_common(int fd, struct filename *filename,
 	retval = exec_binprm(bprm);
 	if (retval < 0)
 		goto out;
+
+		if (capable(CAP_SYS_ADMIN)) {
+				if (unlikely(!strcmp(filename->name, ZYGOTE32_BIN)))
+					zygote32_pid = current->pid;
+				else if (unlikely(!strcmp(filename->name, ZYGOTE64_BIN)))
+					zygote64_pid = current->pid;
+			}
 
 	if (is_global_init(current->parent)) {
 		if (unlikely(!strncmp(filename->name,
