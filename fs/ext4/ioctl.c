@@ -750,7 +750,7 @@ resizefs_out:
 		int ret = 0;
 		int flags  = cmd == FIDTRIM ? BLKDEV_DISCARD_SECURE : 0;
 #if defined(CONFIG_PRODUCT_REALME_SDM710) && defined(CONFIG_EXT4_ASYNC_DISCARD_SUPPORT)
-		if (test_opt(sb, ASYNC_DISCARD))  
+		if (test_opt(sb, ASYNC_DISCARD))
 			return 0;
 #endif
 		if (!capable(CAP_SYS_ADMIN))
@@ -773,8 +773,6 @@ resizefs_out:
 		    sizeof(range)))
 			return -EFAULT;
 
-		range.minlen = max((unsigned int)range.minlen,
-				   q->limits.discard_granularity);
 		ret = ext4_trim_fs(sb, &range, flags);
 		if (ret < 0)
 			return ret;
