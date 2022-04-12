@@ -177,6 +177,10 @@ static void enable_psci_bp_hardening(const struct arm64_cpu_capabilities *entry)
 }
 #endif
 
+#include <uapi/linux/psci.h>
+#include <linux/arm-smccc.h>
+#include <linux/psci.h>
+
 static void call_smc_arch_workaround_1(void)
 {
 	arm_smccc_1_1_smc(ARM_SMCCC_ARCH_WORKAROUND_1, NULL);
