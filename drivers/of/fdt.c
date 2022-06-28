@@ -1094,6 +1094,7 @@ int __init early_init_dt_scan_chosen(unsigned long node, const char *uname,
 {
 	int l = 0;
 	const char *p = NULL;
+	const void *rng_seed;
 	char *cmdline = data;
 	const void *rng_seed;
 
