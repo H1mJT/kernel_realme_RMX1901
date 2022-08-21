@@ -875,14 +875,8 @@ struct xfrm_policy *xfrm_policy_bysel_ctx(struct net *net, const struct xfrm_mar
 }
 EXPORT_SYMBOL(xfrm_policy_bysel_ctx);
 
-<<<<<<< HEAD
-struct xfrm_policy *xfrm_policy_byid(struct net *net, u32 mark, u32 if_id,
-				     u8 type, int dir, u32 id, int delete,
-				     int *err)
-=======
 struct xfrm_policy *xfrm_policy_byid(struct net *net, const struct xfrm_mark *mark,
 					 u8 type, int dir, u32 id, int delete, int *err)
->>>>>>> 2be597a371f8... xfrm: policy: match with both mark and mask on user interfaces
 {
 	struct xfrm_policy *pol, *ret;
 	struct hlist_head *chain;
