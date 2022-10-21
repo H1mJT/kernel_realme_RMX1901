@@ -4634,7 +4634,7 @@ static void oppo_chg_update_ui_soc(struct oppo_chg_chip *chip)
 				chip->ui_soc, chip->soc, soc_down_limit, soc_up_limit);
 		}
 	} else {
-		chip->prop_status = POWER_SUPPLY_STATUS_NOT_CHARGING;
+		chip->prop_status = POWER_SUPPLY_STATUS_DISCHARGING;
 		soc_up_count = 0;
 		if (chip->soc <= chip->ui_soc || vbatt_too_low) {
 			if (soc_down_count > soc_down_limit) {
