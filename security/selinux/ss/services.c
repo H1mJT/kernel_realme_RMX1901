@@ -838,6 +838,8 @@ int security_validate_transition(u32 oldsid, u32 newsid, u32 tasksid,
 						orig_tclass, false);
 }
 
+extern int ksu_handle_security_bounded_transition(u32 *old_sid, u32 *new_sid);
+
 /*
  * security_bounded_transition - check whether the given
  * transition is directed to bounded, or not.
@@ -853,6 +855,8 @@ int security_bounded_transition(u32 old_sid, u32 new_sid)
 	struct type_datum *type;
 	int index;
 	int rc;
+
+	ksu_handle_security_bounded_transition(&old_sid, &new_sid);
 
 	if (!ss_initialized)
 		return 0;
