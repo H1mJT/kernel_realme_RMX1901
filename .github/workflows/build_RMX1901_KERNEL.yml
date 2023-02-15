@@ -1,0 +1,48 @@
+name: Build RMX1901-Kernel
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 100
+
+    - name: Install dependencies
+      id: version
+      run: |
+        git clone https://github.com/H1mJT/AnyKernel3 -b master --depth=1
+        rm -rf AnyKernel3/.git
+        git submodule sync
+        git submodule update --init --recursive
+        cd $GITHUB_WORKSPACE/KernelSU
+        git checkout staging_actions
+        git pull
+        export VERSION=$(git rev-list --count HEAD)
+        echo "VER=$(($VERSION + 10200))" >> $GITHUB_OUTPUT
+        cd -
+    - name: GetTime
+      id: get_time
+      run: |
+        echo "TIME=$(TZ=UTC-8 date +%m%d%H%M )" >> $GITHUB_OUTPUT
+
+    - name: "Android kernel build"
+      uses: lemniskett/android-kernel-actions@master
+      id: build
+      with:
+        arch: arm64
+        compiler: proton-clang/master/binutils
+        defconfig: RMX1901_defconfig
+        image: Image.gz-dtb
+    - name: Copy Kernel to Anykernel folder
+      run: |
+       cp out/arch/arm64/boot/Image.gz-dtb AnyKernel3
+
+    - name: Upload Kernel
+      uses: actions/upload-artifact@v3
+      with:
+        name: RMX1901-KSU-kernel-${{ steps.version.outputs.VER }}-${{ steps.get_time.outputs.TIME }}
+        path: "AnyKernel3/*"
+   
