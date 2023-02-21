@@ -4,15 +4,31 @@ on: [push, pull_request, workflow_dispatch]
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
+      CCACHE_NOHASHDIR: "true"
+      CCACHE_MAXSIZE: "2G"
+      CCACHE_HARDLINK: "true"
+      KERNEL_DEFCONFIG: "RMX1901_defconfig"
+      KERNEL_CMDLINE: "ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- O=out"
     steps:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        fetch-depth: 100
+        submodules: 'true'
+        fetch-depth: 0
+
+    - name: Set up ccache
+      uses: hendrikmuhs/ccache-action@v1.2
 
     - name: Install dependencies
       id: version
       run: |
+        sudo apt-get update -y 
+        sudo apt install gcc-aarch64-linux-gnu -y
+        sudo apt install gcc-arm-linux-gnueabi -y
+        sudo apt install binutils make python3 libssl-dev build-essential bc  bison flex unzip libssl-dev ca-certificates xz-utils mkbootimg cpio device-tree-compiler git git-lfs -y
+        git clone --depth=1 https://github.com/kdrag0n/proton-clang.git clang
         git clone https://github.com/H1mJT/AnyKernel3 -b master --depth=1
         rm -rf AnyKernel3/.git
         git submodule sync
@@ -28,16 +44,13 @@ jobs:
       run: |
         echo "TIME=$(TZ=UTC-8 date +%m%d%H%M )" >> $GITHUB_OUTPUT
 
-    - name: "Android kernel build"
-      uses: lemniskett/android-kernel-actions@master
-      id: build
-      with:
-        arch: arm64
-        compiler: proton-clang/master/binutils
-        defconfig: RMX1901_defconfig
-        image: Image.gz-dtb
-    - name: Copy Kernel to Anykernel folder
+    - name: Build Kernel
       run: |
+       export PATH=$(pwd)/clang/bin/:$PATH
+       export ARCH=arm64
+       export SUBARCH=arm64
+       make $KERNEL_CMDLINE $KERNEL_DEFCONFIG CC="ccache clang"
+       make $KERNEL_CMDLINE CC="ccache clang" -j$(nproc --all)
        cp out/arch/arm64/boot/Image.gz-dtb AnyKernel3
 
     - name: Upload Kernel
