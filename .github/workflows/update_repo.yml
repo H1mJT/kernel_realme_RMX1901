@@ -23,7 +23,7 @@ jobs:
         git checkout main
         git pull
         cd .. && git add .
-        git commit -m "Sync KernelSU to latest"
+        git commit -m "Sync KernelSU to latest source"
         
     - name: Push
       uses: ad-m/github-push-action@master
