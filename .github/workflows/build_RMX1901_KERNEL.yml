@@ -58,7 +58,7 @@ jobs:
        make $KERNEL_CMDLINE $KERNEL_DEFCONFIG CC="ccache clang"
        make $KERNEL_CMDLINE CC="ccache clang" -j$(nproc --all)
        cp out/arch/arm64/boot/Image.gz-dtb AnyKernel3
-       zip -r RMX1901-KernelSU-${{ steps.version.outputs.VER }}-${{ steps.get_time.outputs.TIME }}.zip AnyKernel3
+       cd AnyKernel3 && zip -r ../RMX1901-KernelSU-${{ steps.version.outputs.VER }}-${{ steps.get_time.outputs.TIME }}.zip *
 
     - name: Upload build to Telegram
       uses: appleboy/telegram-action@master
