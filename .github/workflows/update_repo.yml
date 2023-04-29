@@ -1,5 +1,8 @@
 name: Push lastest KernelSU
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 6 * * 6'
 
 jobs:
   build:

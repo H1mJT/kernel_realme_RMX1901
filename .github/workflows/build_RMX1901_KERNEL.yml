@@ -5,6 +5,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
+      TELEGRAM_TO: "${{ secrets.TELEGRAM_TO }}"
+      TELEGRAM_TOKEN: "${{ secrets.TELEGRAM_TOKEN }}"
       CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
       CCACHE_NOHASHDIR: "true"
       CCACHE_MAXSIZE: "2G"
@@ -13,6 +15,7 @@ jobs:
       KERNEL_CMDLINE: "ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- O=out"
     steps:
     - name: Send build message to Telegram
+      if: "${{ env.TELEGRAM_TO != '' && env.TELEGRAM_TOKEN != '' }}"
       uses: appleboy/telegram-action@master
       with:
         to: ${{ secrets.TELEGRAM_TO }}
@@ -61,6 +64,7 @@ jobs:
        cd AnyKernel3 && zip -r ../RMX1901-KernelSU-${{ steps.version.outputs.VER }}-${{ steps.get_time.outputs.TIME }}.zip *
 
     - name: Upload build to Telegram
+      if: "${{ env.TELEGRAM_TO != '' && env.TELEGRAM_TOKEN != '' }}"
       uses: appleboy/telegram-action@master
       with:
         to: ${{ secrets.TELEGRAM_TO }}
