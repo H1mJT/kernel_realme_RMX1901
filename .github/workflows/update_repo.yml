@@ -9,6 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      TELEGRAM_TO: "${{ secrets.TELEGRAM_TO }}"
+      TELEGRAM_TOKEN: "${{ secrets.TELEGRAM_TOKEN }}"
+      CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
+      CCACHE_NOHASHDIR: "true"
+      CCACHE_MAXSIZE: "2G"
+      CCACHE_HARDLINK: "true"
+      KERNEL_DEFCONFIG: "RMX1901_defconfig"
+      KERNEL_CMDLINE: "ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- O=out LLVM_IAS=1"
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -17,6 +25,9 @@ jobs:
         submodules: 'true'
         fetch-depth: 0
    
+    - name: Set up ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+      
     - name: Update Repo
       id: version
       run: |
@@ -28,7 +39,7 @@ jobs:
         git checkout main
         git pull
         cd .. && git add .
-        git commit -m "Sync KernelSU to latest source"
+        git commit -m "Auto sync KernelSU to latest source"
         export NEW=$(git rev-parse HEAD)
         echo "NEW_SHA=$NEW" >> $GITHUB_OUTPUT
     - name: Push
@@ -36,3 +47,62 @@ jobs:
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.ACCESS_TOKEN }}
+        
+    - name: Send build message to Telegram
+      if: "${{ env.TELEGRAM_TO != '' && env.TELEGRAM_TOKEN != '' }}"
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: Build Started
+        
+    - name: Install dependencies
+      id: version
+      run: |
+        sudo apt-get update -y 
+        sudo apt install gcc-aarch64-linux-gnu -y
+        sudo apt install gcc-arm-linux-gnueabi -y
+        sudo apt install binutils make python3 libssl-dev build-essential bc  bison flex zip unzip libssl-dev ca-certificates xz-utils mkbootimg cpio device-tree-compiler git git-lfs -y
+        git clone --depth=1 https://github.com/kdrag0n/proton-clang.git clang
+        git clone https://github.com/H1mJT/AnyKernel3 -b master --depth=1
+        rm -rf AnyKernel3/.git
+        rm -rf AnyKernel3/.github
+        git submodule sync
+        git submodule update --init --recursive
+        cd $GITHUB_WORKSPACE/KernelSU
+        git checkout main
+        git pull
+        export VERSION=$(git rev-list --count HEAD)
+        echo "VER=$(($VERSION + 10200))" >> $GITHUB_OUTPUT
+        cd -
+    - name: GetTime
+      id: get_time
+      run: |
+        echo "TIME=$(TZ=UTC-8 date +%m%d%H%M )" >> $GITHUB_OUTPUT
+    - name: Build Kernel
+      run: |
+       export PATH=$(pwd)/clang/bin/:$PATH
+       export ARCH=arm64
+       export SUBARCH=arm64
+       make $KERNEL_CMDLINE $KERNEL_DEFCONFIG CC="ccache clang"
+       make $KERNEL_CMDLINE CC="ccache clang" -j$(nproc --all)
+       cp out/arch/arm64/boot/Image.gz-dtb AnyKernel3
+       cd AnyKernel3 && zip -r ../RMX1901-KernelSU-${{ steps.version.outputs.VER }}-${{ steps.get_time.outputs.TIME }}.zip *
+
+    - name: Upload build to Telegram
+      if: "${{ env.TELEGRAM_TO != '' && env.TELEGRAM_TOKEN != '' }}"
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: |
+          Updated KernelSU to ${{ steps.version.outputs.VER }}
+          Get latest manager app at https://t.me/KernelSU_group/3234
+        document: RMX1901-KernelSU-${{ steps.version.outputs.VER }}-${{ steps.get_time.outputs.TIME }}.zip
+    - name: Upload Kernel
+      uses: actions/upload-artifact@v3
+      with:
+        name: RMX1901-KernelSU-${{ steps.version.outputs.VER }}-${{ steps.get_time.outputs.TIME }}
+        path: "AnyKernel3/*"
+        
+        

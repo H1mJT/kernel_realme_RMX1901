@@ -14,13 +14,6 @@ jobs:
       KERNEL_DEFCONFIG: "RMX1901_defconfig"
       KERNEL_CMDLINE: "ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- O=out LLVM_IAS=1"
     steps:
-    - name: Send build message to Telegram
-      if: "${{ env.TELEGRAM_TO != '' && env.TELEGRAM_TOKEN != '' }}"
-      uses: appleboy/telegram-action@master
-      with:
-        to: ${{ secrets.TELEGRAM_TO }}
-        token: ${{ secrets.TELEGRAM_TOKEN }}
-        message: Build Started
     - name: Checkout
       uses: actions/checkout@v3
       with:
@@ -29,7 +22,7 @@ jobs:
 
     - name: Set up ccache
       uses: hendrikmuhs/ccache-action@v1.2
-
+    
     - name: Install dependencies
       id: version
       run: |
@@ -49,10 +42,12 @@ jobs:
         export VERSION=$(git rev-list --count HEAD)
         echo "VER=$(($VERSION + 10200))" >> $GITHUB_OUTPUT
         cd -
+    
     - name: GetTime
       id: get_time
       run: |
         echo "TIME=$(TZ=UTC-8 date +%m%d%H%M )" >> $GITHUB_OUTPUT
+    
     - name: Build Kernel
       run: |
        export PATH=$(pwd)/clang/bin/:$PATH
@@ -61,18 +56,7 @@ jobs:
        make $KERNEL_CMDLINE $KERNEL_DEFCONFIG CC="ccache clang"
        make $KERNEL_CMDLINE CC="ccache clang" -j$(nproc --all)
        cp out/arch/arm64/boot/Image.gz-dtb AnyKernel3
-       cd AnyKernel3 && zip -r ../RMX1901-KernelSU-${{ steps.version.outputs.VER }}-${{ steps.get_time.outputs.TIME }}.zip *
 
-    - name: Upload build to Telegram
-      if: "${{ env.TELEGRAM_TO != '' && env.TELEGRAM_TOKEN != '' }}"
-      uses: appleboy/telegram-action@master
-      with:
-        to: ${{ secrets.TELEGRAM_TO }}
-        token: ${{ secrets.TELEGRAM_TOKEN }}
-        message: |
-          Updated KernelSU to ${{ steps.version.outputs.VER }}
-          Get latest manager app at https://t.me/KernelSU_group/3234
-        document: RMX1901-KernelSU-${{ steps.version.outputs.VER }}-${{ steps.get_time.outputs.TIME }}.zip
     - name: Upload Kernel
       uses: actions/upload-artifact@v3
       with:
