@@ -29,7 +29,7 @@ jobs:
       uses: hendrikmuhs/ccache-action@v1.2
       
     - name: Update Repo
-      id: version
+      id: sha
       run: |
         git config --global user.name "H1mJT"
         git config --global user.email "himjyoti22@gmail.com"
@@ -43,7 +43,7 @@ jobs:
         export NEW=$(git rev-parse HEAD)
         echo "NEW_SHA=$NEW" >> $GITHUB_OUTPUT
     - name: Push
-      if: "${{ github.sha != steps.version.outputs.NEW_SHA && env.ACCESS_TOKEN != ''}}"
+      if: "${{ github.sha != steps.sha.outputs.NEW_SHA && env.ACCESS_TOKEN != ''}}"
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.ACCESS_TOKEN }}
@@ -67,11 +67,7 @@ jobs:
         git clone https://github.com/H1mJT/AnyKernel3 -b master --depth=1
         rm -rf AnyKernel3/.git
         rm -rf AnyKernel3/.github
-        git submodule sync
-        git submodule update --init --recursive
         cd $GITHUB_WORKSPACE/KernelSU
-        git checkout main
-        git pull
         export VERSION=$(git rev-list --count HEAD)
         echo "VER=$(($VERSION + 10200))" >> $GITHUB_OUTPUT
         cd -
